@@ -1,6 +1,7 @@
 import React from 'react';
-import '../styles/Intro.css';
-import logoletter from '../assets/images/letter-logo.png';
+import '../styles/IntroPage.css';
+import letterbefore from '../assets/images/letter-before.png';
+import letterafter from '../assets/images/letter-after.png';
 import googlelogo from '../assets/images/google.png';
 import kakaologo from '../assets/images/kakao.png';
 
@@ -9,7 +10,7 @@ function Intro() {
     <div className="mobile-wrapper">
       <div className="intro-container">
         <div className="letter-logo">
-            <img src={logoletter} alt="메일 로고" />
+            <img src={letterbefore} alt="메일 로고" />
         </div>
         <h1 className="intro-title">Dear Voice</h1>
         <p className="intro-subtitle">: 글자가 닿지 못하는 곳에, 당신의 목소리가 닿습니다.</p>

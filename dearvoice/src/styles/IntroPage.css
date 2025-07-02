@@ -55,7 +55,6 @@
 }
 
 .login-buttons img {
-  margin-top: 13px;
   margin-left: 10px;
   width: 20px;
   height: 20px;
@@ -65,29 +64,31 @@
   padding: 12px 20px;
   border-radius: 8px;
   font-size: 14px;
-  margin: 0 auto;
   border: none;
   cursor: pointer;
+  display: flex;             
 }
 
 .google-btn {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
-  gap: 8px;
-  border: none;
+  border: 1px solid rgb(192, 192, 192);
   cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;   
 }
 
 .kakao-btn {
   background-color: #fddc3f;
   color: #3c1e1e;
   border-radius: 8px;
-  gap: 8px;
   border: none;
   cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;   
 }
 
 

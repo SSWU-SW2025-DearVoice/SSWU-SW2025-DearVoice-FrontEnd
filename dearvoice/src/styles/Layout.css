@@ -1,0 +1,22 @@
+.mobile-wrapper {
+  width: 100%;
+  max-width: 375px;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #FAF4DA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-wrapper {
+  width: 100%;
+  max-width: 375px;
+  height: 100vh;
+  background-color: #FAF4DA;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
