@@ -1,7 +1,28 @@
-.homeletter{
+.homeletter-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 170px;
+}
+
+.homeletter {
     width: 340px;
     height: 245px;
-    display: flex;
-    margin: 0 auto;
-    margin-top: 170px;
+    position: relative;
+}
+
+.homeletter img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.welcome-text {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    color: #3a2e25;
+    transform: translate(-50%, -50%);
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
 }
