@@ -1,0 +1,67 @@
+.nablist {
+  position: absolute;
+  top: 0%;
+  width: 100%;
+  left: 0;
+  background-color: rgba(59, 47, 47, 0.499);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.659);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: navbarDown 0.35s;
+  pointer-events: none;
+}
+
+@keyframes navbarDown {
+  from { transform: translateY(-15px); opacity: 0.2s; }
+  to { transform: translateY(0); opacity: 0.2s; }
+}
+
+.nablist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nablist li {
+    padding-left: 60px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    display: flex;
+    align-items: center; 
+    pointer-events: auto;
+}
+
+.nablist-first:hover, .nablist-sec:hover, .nablist-third:hover {
+    background-color: #5a474788;
+    color: #fff;
+    transition: background 0.15s;
+
+}
+
+.logout{
+    margin-top: 70px;
+}
+
+.nablist-third{
+    margin-bottom: 20px;
+}
+
+.nablist-container {
+  border: none;
+  border-top: 1.5px solid #fff;
+  width: 80%;                  
+  align-self: center;           
+  height: 0;
+  background: none;
+  margin: -2px 0;
+}

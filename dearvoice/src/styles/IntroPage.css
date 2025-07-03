@@ -18,17 +18,43 @@
 }
 
 .letter-logo {
+  position: relative;
+  width: 232px;
+  height: 154px;
   display: flex;
-  justify-content: center;  
+  justify-content: center;
   align-items: center;
   margin-bottom: 10px;
   margin-top: 130px;
 }
 
-.letter-logo img {
-  width: 232px;               
+.letter-img {
+  position: absolute;
+  transition: opacity 1.0s;
+  opacity: 0;
+}
+
+.letter-img.show {
+  opacity: 1;
+  z-index: 2;
+}
+
+.letter-img.hide {
+  opacity: 0;
+  z-index: 1;
+}
+
+.letter-before {
+  width: 232px;
   height: 154px;
   object-fit: contain;
+}
+
+.letter-after {
+  width: 295px;
+  height: 215px;
+  margin-top: -66px;
+  object-fit: cover;
 }
 
 .intro-title {
@@ -55,7 +81,6 @@
 }
 
 .login-buttons img {
-  margin-top: 13px;
   margin-left: 10px;
   width: 20px;
   height: 20px;
@@ -65,29 +90,31 @@
   padding: 12px 20px;
   border-radius: 8px;
   font-size: 14px;
-  margin: 0 auto;
   border: none;
   cursor: pointer;
+  display: flex;             
 }
 
 .google-btn {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
-  gap: 8px;
-  border: none;
+  border: 1px solid rgb(192, 192, 192);
   cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;   
 }
 
 .kakao-btn {
   background-color: #fddc3f;
   color: #3c1e1e;
   border-radius: 8px;
-  gap: 8px;
   border: none;
   cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;   
 }
 
 
