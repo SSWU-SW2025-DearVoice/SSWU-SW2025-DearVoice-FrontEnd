@@ -18,17 +18,43 @@
 }
 
 .letter-logo {
+  position: relative;
+  width: 232px;
+  height: 154px;
   display: flex;
-  justify-content: center;  
+  justify-content: center;
   align-items: center;
   margin-bottom: 10px;
   margin-top: 130px;
 }
 
-.letter-logo img {
-  width: 232px;               
+.letter-img {
+  position: absolute;
+  transition: opacity 1.0s;
+  opacity: 0;
+}
+
+.letter-img.show {
+  opacity: 1;
+  z-index: 2;
+}
+
+.letter-img.hide {
+  opacity: 0;
+  z-index: 1;
+}
+
+.letter-before {
+  width: 232px;
   height: 154px;
   object-fit: contain;
+}
+
+.letter-after {
+  width: 295px;
+  height: 215px;
+  margin-top: -66px;
+  object-fit: cover;
 }
 
 .intro-title {
