@@ -2,10 +2,10 @@ import React from 'react'
 import '../../styles/MypageHome.css'
 import sentimg from "../../assets/images/letter-after.png";
 import receivedimg from "../../assets/images/letter-before.png";
-import { useNavigate } from "react-router-dom"; // 추가
+import { useNavigate } from "react-router-dom";
 
 const MypageHome = () => {
-  const navigate = useNavigate(); // 추가
+  const navigate = useNavigate();
 
   return (
     <div className="mypage-title">
@@ -13,7 +13,7 @@ const MypageHome = () => {
       <div className="mypage-container">
         <button
           className="mypage-sent"
-          onClick={() => navigate("/mypage/sent")} // 추가
+          onClick={() => navigate("/mypage/sent")}
         >
           <img src={sentimg} className='sentimg' alt="보낸 편지함"/>
           <div className="sent-text">보낸 편지함</div>

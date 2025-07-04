@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 추가
+import { useNavigate } from 'react-router-dom';
 import '../../styles/SentList.css';
 import arrow from '../../assets/images/arrow.png'
 import arrowstart from '../../assets/images/arrow-start.png'
 
 const dummyData = [
-  { id: 1, title: "할머니, 안녕하세요!", user: "@kimgrandma", color: "pink" },
+  { id: 1,
+    title: "할머니, 안녕하세요!",
+    user: "@kimgrandma",
+    text: "할머니 요즘 날씨가 더워졌는데, 잘 지내고 계시나요? 할머니 요즘 날씨가 더워졌는데, 잘 지내고 계세요?",
+    date: "2025.06.10 8:30 AM",
+    color: "pink",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
   { id: 2, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 3, title: "보고 싶다!!!", user: "@bobbyindaeyo", color: "yellow" },
+  { id: 3,
+    title: "내일 노는 거 맞지?",
+    user: "@bobbyindaeyo",
+    text: "아 왤케 연락을 안 봄? 내일 노는 거 맞지? 점심은 뭐 먹을래? 빨리 보고 싶다. 안 본 지 너무 오래됨",
+    date: "2025.06.21 12:21 PM",
+    color: "green",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
   { id: 4, title: "할머니, 안녕하세요sdfsdfdsdff!", user: "@kimgrandmasdfsdfdf", color: "green" },
   { id: 5, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
   { id: 6, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
@@ -39,6 +51,7 @@ const dummyData = [
   { id: 10, title: "응원합니다", user: "@jeongbami", color: "blue" },
   { id: 11, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
 ];
+
 
 const colorClass = {
   green: "sent-item-green",
@@ -73,14 +86,14 @@ const SentList = () => {
         {pageData.map(item => (
           <div key={item.id} className={`sent-item ${colorClass[item.color]}`}>
             <span className="sent-title">
-              [ {item.title.length > 12 ? item.title.slice(0, 8) + "..." : item.title} ]
+              [ {item.title} ]
             </span>
             <span className="sent-user">
-              {item.user.length > 12 ? item.user.slice(0, 9) + "..." : item.user}
+              {item.user}
             </span>
             <button
               className="sent-detail"
-              onClick={() => navigate(`/mypage/detail/${item.id}`)}
+              onClick={() => navigate(`/mypage/detail/sent/${item.id}`)}
             >
               <img src={arrow} className='arrow' alt="arrow" />
             </button>

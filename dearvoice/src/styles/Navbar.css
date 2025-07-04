@@ -3,7 +3,7 @@
   top: 0%;
   width: 100%;
   left: 0;
-  background-color: rgba(59, 47, 47, 0.6);
+  background-color: rgba(59, 47, 47, 0.68);
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   box-shadow: 0 0px 5px rgba(0, 0, 0, 0.659);
@@ -43,7 +43,7 @@
 }
 
 .nablist-first:hover, .nablist-sec:hover, .nablist-third:hover {
-    background-color: #5a4747d1;
+    background-color: #5a4747e5;
     color: #fff;
     transition: background 0.15s;
 

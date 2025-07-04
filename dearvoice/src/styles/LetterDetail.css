@@ -1,0 +1,17 @@
+/*detail페이지 공통 스타일링*/
+
+.letterdetail-wrapper {
+  width: 100%;
+  max-width: 375px;
+  margin: 0 auto;
+}
+
+.letterdetail-title{
+    font-size: 20px;
+    font-weight: bold;
+    color: #3B2F2F;
+    padding-left: 16px;
+    margin-left: 25px;
+    margin-top: 40px;
+    border-left: 4px solid #F9CB73;
+}

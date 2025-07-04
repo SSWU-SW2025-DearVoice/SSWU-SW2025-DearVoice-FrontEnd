@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../styles/ReceivedList.css';
-import arrow from '../../assets/images/arrow.png'
-import arrowstart from '../../assets/images/arrow-start.png'
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "../../styles/LetterDetail.css";
+import LetterDetailCard from "../../components/LetterDetailCard";
+import useAudioPlayer from "../../hooks/useLetterAudio";
 
 const dummyData = [
   { id: 1,
@@ -52,83 +52,31 @@ const dummyData = [
   { id: 11, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
 ];
 
-const colorClass = {
-  green: "sent-item-green",
-  gray: "sent-item-gray",
-  yellow: "sent-item-yellow",
-  blue: "sent-item-blue",
-  pink: "sent-item-pink",
-}; //편지 배경 색상 지정용
 
-const ITEMS_PER_PAGE = 5; //한 페이지 당 5개 보여줌 페이지네이션
-const MAX_PAGE_BUTTONS = 5; // 한 그룹에 보여줄 페이지 버튼 수
-
-const ReceivedList = () => {
-  const [page, setPage] = useState(1);
+function ReceivedLetterDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const totalPages = Math.ceil(dummyData.length / ITEMS_PER_PAGE);
+  // id는 문자열이므로 숫자로 변환해서 비교
+  const letter = dummyData.find(item => String(item.id) === String(id));
 
-  // 페이지네이션 그룹 계산
-  const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
-  const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
-  const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
+  // letter가 없을 때 예외 처리
+  if (!letter) return <div>편지를 찾을 수 없습니다.</div>;
 
-  // 최신순 정렬 및 페이지 데이터 추출
-  const pageData = dummyData
-    .slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const audioProps = useAudioPlayer(letter.audioUrl);
 
   return (
-    <div className="receivedlist-wrapper">
-      <h2 className="receivedlist-title">내 보관소 - 받은 편지함</h2>
-      <div className="receivedlist-list">
-        {pageData.map(item => (
-          <div key={item.id} className={`received-item ${colorClass[item.color]}`}>
-            <span className="received-title">
-              [ {item.title} ]
-            </span>
-            <span className="received-user">
-              {item.user}
-            </span>
-            <button
-              className="received-detail"
-              onClick={() => navigate(`/mypage/detail/received/${item.id}`)}
-            >
-              <img src={arrow} className='arrow' alt="arrow" />
-            </button>
-          </div>
-        ))}
+    <div className="letterdetail-wrapper">
+      <div
+        className="letterdetail-title"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate("/mypage/received")}
+      >
+        내 보관소 - 받은 편지함
       </div>
-      <div className="receivedlist-pagination">
-        <button
-          className='pagination-arrow'
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          <img src={arrowstart} className='arrow-start' alt="prev"/>
-        </button>
-
-        {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => {
-          const pageNum = groupStart + i;
-          return (
-            <button
-              key={pageNum}
-              className={`pagination-num ${page === pageNum ? "active" : ""}`}
-              onClick={() => setPage(pageNum)}
-            >{pageNum}</button>
-          );
-        })}
-
-        <button
-          className='pagination-arrow'
-          disabled={page === totalPages}
-          onClick={() => setPage(page + 1)}
-        >
-          <img src={arrow} className='arrow-end' alt="next"/>
-        </button>
-      </div>
+      <LetterDetailCard letter={letter} {...audioProps} />
     </div>
   );
-};
+}
 
-export default ReceivedList;
+export default ReceivedLetterDetail;

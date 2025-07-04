@@ -21,7 +21,8 @@ import SkyLetterPage from "./pages/SkyLetter";
 import MyPageHome from "./pages/mypage/MypageHome";
 import SentList from "./pages/mypage/SentList";
 import ReceivedList from "./pages/mypage/ReceivedList";
-import LetterDetail from "./pages/mypage/LetterDetail";
+import SentLetterDetail from "./pages/mypage/SentLetterDetail";
+import ReceivedLetterDetail from "./pages/mypage/ReceivedLetterDetail";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -44,7 +45,8 @@ function App() {
             <Route index element={<MyPageHome />} />
             <Route path="sent" element={<SentList />} />
             <Route path="received" element={<ReceivedList />} />
-            <Route path="detail/:id" element={<LetterDetail />} />
+            <Route path="detail/sent/:id" element={<SentLetterDetail />} />
+            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
           </Route>
         </Route>
 
