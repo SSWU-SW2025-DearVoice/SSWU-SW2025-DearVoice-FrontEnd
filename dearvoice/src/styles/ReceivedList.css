@@ -1,10 +1,10 @@
-.sentlist-wrapper {
+.receivedlist-wrapper {
   width: 100%;
   max-width: 375px;
   margin: 0 auto;
 }
 
-.sentlist-title {
+.receivedlist-title {
   font-size: 20px;
   font-weight: bold;
   color: #3B2F2F;
@@ -14,7 +14,7 @@
   border-left: 4px solid #F9CB73;
 }
 
-.sentlist-list {
+.receivedlist-list {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -24,7 +24,7 @@
   margin-top: 70px;
 }
 
-.sent-item {
+.received-item {
   display: flex;
   align-items: center;
   border-radius: 12px;
@@ -34,18 +34,18 @@
   min-height: 35px;
 }
 
-.sent-item:hover {
+.received-item:hover {
   border: 2.3px solid #3B2F2F;
   box-shadow: 0 2px 12px #f9cb7360;
 }
 
-.sent-item-green { background: #c6eab7; }
-.sent-item-gray  { background: #e3e3e3; }
-.sent-item-yellow{ background: #ffe6a7; }
-.sent-item-blue  { background: #b7d8f2; }
-.sent-item-pink  { background: #f7c6c6; }
+.received-item-green { background: #c6eab7; }
+.received-item-gray  { background: #e3e3e3; }
+.received-item-yellow{ background: #ffe6a7; }
+.received-item-blue  { background: #b7d8f2; }
+.received-item-pink  { background: #f7c6c6; }
 
-.sent-title {
+.received-title {
   width: 175px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -53,7 +53,7 @@
   display: inline-block;
 }
 
-.sent-user {
+.received-user {
   width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,7 +65,7 @@
   vertical-align: middle;
 }
 
-.sent-detail{
+.received-detail{
     background: none;
     background-color: transparent;
     border: none;
@@ -80,7 +80,7 @@
     display: block;
  }
 
-.sentlist-pagination {
+.receivedlist-pagination {
   display: flex;
   justify-content: center;
   gap: 6px;

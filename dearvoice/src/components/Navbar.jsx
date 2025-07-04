@@ -12,7 +12,7 @@ const NavBar = ({ onLogout, onClose }) => {
 
   return (
       <ul className="nablist">
-        <li onClick={onLogout} className="logout">로그아웃</li>
+        <li onClick={onLogout} className="logout">로그아웃</li> {/*로그아웃 로직 구현해야됨*/}
         <hr className="nablist-container" />
         <li className="nablist-first" onClick={() => handleMove("/voice")}>음성 편지</li>
         <li className="nablist-sec" onClick={() => handleMove("/sky")}>하늘 편지</li>

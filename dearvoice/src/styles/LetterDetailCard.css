@@ -1,0 +1,78 @@
+/*상세 letter 카드 부분 스타일링*/
+
+.letterdetail-box {
+  border-radius: 20px;
+  padding: 28px 18px 23px 18px;
+  margin: 70px 25px;
+  box-shadow: 0 2px 6px #0004;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.letterdetail-pink { background: #f7c6c6; }
+.letterdetail-blue { background: #b7d8f2; }
+.letterdetail-yellow { background: #ffe6a7; }
+.letterdetail-green { background: #c6eab7; }
+.letterdetail-gray { background: #e3e3e3; }
+
+.letterdetail-row {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 500;
+  display: flex;
+}
+
+.letterdetail-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #3B2F2F;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.letterdetail-value {
+  color: #3B2F2F;
+  font-weight: 400;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.letterdetail-text {
+    color: gray;
+    font-weight: 400;
+    font-size: 14px;
+    overflow-y: scroll;
+    max-height: 60px;
+    scrollbar-width: thin;
+    scrollbar-color: #bbb #fff;
+}
+
+.letterdetail-date {
+  color: #3B2F2F;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 5px;
+}
+
+.letterdetail-audio {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.letterdetail-play {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.letterdetail-play img{
+    width: 50px;
+    height: 50px;
+}

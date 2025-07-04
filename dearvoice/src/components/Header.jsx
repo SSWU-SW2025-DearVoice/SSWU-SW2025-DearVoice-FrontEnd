@@ -15,7 +15,7 @@ const Header = () => {
 
     const handleHome = () => {
         window.location.href = '/home';
-    } //로고 이미지 누르면 home으로 돌아감
+    } // 로고 이미지 누르면 home으로 돌아감
 
   return (
     <>

@@ -30,7 +30,7 @@ function Onboarding() {
 
   const next = () => {
     if (idx < slides.length - 1) setIdx(idx + 1);
-    else navigate("/register");
+    else navigate("/home");
   };
 
   
