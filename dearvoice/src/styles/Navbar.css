@@ -3,14 +3,14 @@
   top: 0%;
   width: 100%;
   left: 0;
-  background-color: rgba(59, 47, 47, 0.499);
+  background-color: rgba(59, 47, 47, 0.6);
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   box-shadow: 0 0px 5px rgba(0, 0, 0, 0.659);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  animation: navbarDown 0.35s;
+  animation: navbarDown 0.25s;
   pointer-events: none;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .nablist-first:hover, .nablist-sec:hover, .nablist-third:hover {
-    background-color: #5a474788;
+    background-color: #5a4747d1;
     color: #fff;
     transition: background 0.15s;
 
