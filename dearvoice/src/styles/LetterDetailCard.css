@@ -10,11 +10,21 @@
   gap: 10px;
 }
 
-.letterdetail-pink { background: #f7c6c6; }
-.letterdetail-blue { background: #b7d8f2; }
-.letterdetail-yellow { background: #ffe6a7; }
-.letterdetail-green { background: #c6eab7; }
-.letterdetail-gray { background: #e3e3e3; }
+.letterdetail-pink {
+  background: #f7c6c6;
+}
+.letterdetail-blue {
+  background: #b7d8f2;
+}
+.letterdetail-yellow {
+  background: #ffe6a7;
+}
+.letterdetail-green {
+  background: #c6eab7;
+}
+.letterdetail-gray {
+  background: #e3e3e3;
+}
 
 .letterdetail-row {
   background: #fff;
@@ -25,15 +35,15 @@
 }
 
 .letterdetail-label {
-    font-size: 16px;
-    font-weight: bold;
-    color: #3B2F2F;
-    margin-right: 4px;
-    white-space: nowrap;
+  font-size: 16px;
+  font-weight: bold;
+  color: #3b2f2f;
+  margin-right: 4px;
+  white-space: nowrap;
 }
 
 .letterdetail-value {
-  color: #3B2F2F;
+  color: #3b2f2f;
   font-weight: 400;
   overflow: hidden;
   font-size: 14px;
@@ -41,17 +51,17 @@
 }
 
 .letterdetail-text {
-    color: gray;
-    font-weight: 400;
-    font-size: 14px;
-    overflow-y: scroll;
-    max-height: 60px;
-    scrollbar-width: thin;
-    scrollbar-color: #bbb #fff;
+  color: gray;
+  font-weight: 400;
+  font-size: 14px;
+  overflow-y: scroll;
+  max-height: 60px;
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #fff;
 }
 
 .letterdetail-date {
-  color: #3B2F2F;
+  color: #3b2f2f;
   font-size: 14px;
   font-weight: 500;
   margin-left: 5px;
@@ -64,15 +74,15 @@
 }
 
 .letterdetail-play {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.letterdetail-play img{
-    width: 50px;
-    height: 50px;
+.letterdetail-play img {
+  width: 50px;
+  height: 50px;
 }
