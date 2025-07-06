@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 
@@ -30,7 +26,7 @@ function App() {
     <Router>
       <Routes>
         {/* 비로그인 페이지 */}
-        <Route path="/" element={<Intro />} />
+        <Route path="/" element={<Onboarding />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/register" element={<Register />} />
 
@@ -46,7 +42,10 @@ function App() {
             <Route path="sent" element={<SentList />} />
             <Route path="received" element={<ReceivedList />} />
             <Route path="detail/sent/:id" element={<SentLetterDetail />} />
-            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
+            <Route
+              path="detail/received/:id"
+              element={<ReceivedLetterDetail />}
+            />
           </Route>
         </Route>
 
