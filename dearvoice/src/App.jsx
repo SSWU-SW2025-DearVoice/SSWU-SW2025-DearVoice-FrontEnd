@@ -4,11 +4,13 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-
+import "./App.css";
 import Layout from "./components/Layout";
 
 // 비로그인 페이지(Intro)
 import Intro from "./pages/IntroPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Onboarding from "./pages/onboarding";
 import Register from "./pages/Register";
 
@@ -31,6 +33,8 @@ function App() {
       <Routes>
         {/* 비로그인 페이지 */}
         <Route path="/" element={<Intro />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/register" element={<Register />} />
 
