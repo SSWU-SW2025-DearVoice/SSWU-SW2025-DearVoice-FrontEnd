@@ -10,14 +10,3 @@
   justify-content: flex-start;
   position: relative;
 }
-
-.layout-wrapper {
-  width: 100%;
-  height: 100vh;
-  background-color: #FAF4DA;
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-}

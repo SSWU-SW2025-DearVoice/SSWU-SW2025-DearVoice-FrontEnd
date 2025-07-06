@@ -1,14 +1,12 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 import Layout from "./components/Layout";
 
 // 비로그인 페이지(Intro)
 import Intro from "./pages/IntroPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Onboarding from "./pages/onboarding";
 import Register from "./pages/Register";
 
@@ -30,7 +28,9 @@ function App() {
     <Router>
       <Routes>
         {/* 비로그인 페이지 */}
-        <Route path="/" element={<Intro />} />
+        <Route path="/" element={<Onboarding />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/register" element={<Register />} />
 
@@ -46,7 +46,10 @@ function App() {
             <Route path="sent" element={<SentList />} />
             <Route path="received" element={<ReceivedList />} />
             <Route path="detail/sent/:id" element={<SentLetterDetail />} />
-            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
+            <Route
+              path="detail/received/:id"
+              element={<ReceivedLetterDetail />}
+            />
           </Route>
         </Route>
 

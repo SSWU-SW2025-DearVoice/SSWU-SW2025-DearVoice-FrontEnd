@@ -72,7 +72,7 @@
   font-weight: 500;
 }
 
-.login-buttons {
+.register-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -81,7 +81,7 @@
   margin-top: 40px;
 }
 
-.login-buttons img {
+.register-buttons img {
   margin-left: 10px;
   width: 20px;
   height: 20px;
@@ -96,26 +96,28 @@
   display: flex;             
 }
 
-.google-btn {
+.login-btn {
   background-color: #fff;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  border: 1px solid rgb(192, 192, 192);
+  border: 1px solid rgb(212, 212, 212);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;   
 }
 
-.kakao-btn {
-  background-color: #fddc3f;
-  color: #3c1e1e;
+.signup-btn {
+  background-color: #fff;
+  border: 1px solid rgb(212, 212, 212);
   border-radius: 8px;
-  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;   
+}
+
+.login-btn:hover, .signup-btn:hover{
+  background-color: #F9CB73;
 }
 
 
