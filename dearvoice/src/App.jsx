@@ -28,7 +28,7 @@ function App() {
     <Router>
       <Routes>
         {/* 비로그인 페이지 */}
-        <Route path="/" element={<Onboarding />} />
+        <Route path="/" element={<Intro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/onboarding" element={<Onboarding />} />
