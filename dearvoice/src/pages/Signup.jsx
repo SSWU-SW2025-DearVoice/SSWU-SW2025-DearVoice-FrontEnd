@@ -89,21 +89,19 @@ const Signup = () => {
     }
   }, [form.password, form.passwordConfirm]);
 
+  // 모든 검증이 성공했는지 확인하는 계산된 값
+  const isFormValid = 
+    emailCheck.status === "success" && 
+    idCheck.status === "success" && 
+    passwordCheck.status === "success" &&
+    form.name.trim() !== "";
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
     
-    // 모든 검증 확인
-    if (emailCheck.status !== "success") {
-      setMessage("이메일을 확인해주세요.");
-      return;
-    }
-    if (idCheck.status !== "success") {
-      setMessage("아이디를 확인해주세요.");
-      return;
-    }
-    if (passwordCheck.status !== "success") {
-      setMessage("비밀번호를 확인해주세요.");
+    // 버튼이 비활성화 상태면 실행하지 않음
+    if (!isFormValid) {
       return;
     }
     
@@ -111,14 +109,14 @@ const Signup = () => {
       // passwordConfirm 제거하고 백엔드에 전송
       const { passwordConfirm, ...signupData } = form;
 
-      await axios.post("http://127.0.0.1:8000/api/signup/", signupData, {
+      await axios.post("http://13.209.3.218:8000/signup/", signupData, {
         headers: { "Content-Type": "application/json" }
       });
       setShowModal(true); 
     } catch (err) {
       setMessage("회원가입 실패: 입력값을 확인하세요.");
     }
-  }; //회원가입 실패 시 모달 띄우기?
+  }; 
 
   const handleModalConfirm = () => {
     setShowModal(false);
@@ -207,7 +205,11 @@ const Signup = () => {
         </div>
       </div>
       
-      <button className="signup-submit-btn" onClick={handleSignup}>
+      <button 
+        className={`signup-submit-btn ${isFormValid ? 'active' : ''}`}
+        onClick={handleSignup}
+        disabled={!isFormValid}
+      >
         회원가입
       </button>
       

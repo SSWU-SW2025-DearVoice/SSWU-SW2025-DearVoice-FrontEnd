@@ -71,7 +71,7 @@
   flex: 1;
   font-size: 16px;
   background: transparent;
-  max-width: 220px;
+  max-width: 226px;
 }
 
 .signup-field-pw {
@@ -92,7 +92,7 @@
   flex: 1;
   font-size: 16px;
   background: transparent;
-  max-width: 187px;
+  max-width: 193px;
 }
 
 .signup-field-repw {
@@ -114,7 +114,7 @@
   flex: 1;
   font-size: 16px;
   background: transparent;
-  max-width: 140px;
+  max-width: 146px;
 }
 
 .signup-field-repw .check-message {
@@ -145,7 +145,7 @@
   flex: 1;
   font-size: 16px;
   background: transparent;
-  max-width: 198px;
+  max-width: 204px;
 }
 
 .signup-field-id input {
@@ -154,14 +154,14 @@
   flex: 1;
   font-size: 16px;
   background: transparent;
-  max-width: 198px;
+  max-width: 204px;
 }
 
 .field-label-name {
   color: #3B2F2F;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
   min-width: 42px;
   font-weight: 600;
 }
@@ -170,7 +170,7 @@
   color: #3B2F2F;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
   min-width: 59px;
   font-weight: 600;
 }
@@ -179,7 +179,7 @@
   color: #3B2F2F;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
   min-width: 59px;
   font-weight: 600;
 }
@@ -188,7 +188,7 @@
   color: #3B2F2F;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
   min-width: 60px;
   font-weight: 600;
 }
@@ -197,7 +197,7 @@
   color: #3B2F2F;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
   min-width: 122px;
   font-weight: 600;
 }
@@ -226,12 +226,29 @@
   width: 104px;
   height: 42px;
   margin-top: 60px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25); /* 그림자 추가 */
-  transition: box-shadow 0.2s ease, background 0.2s ease; /* 부드러운 전환 */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  opacity: 0.6; /* 비활성화 상태에서 반투명 */
 }
 
-.signup-submit-btn:hover{
-    background: #F9CB73;
+.signup-submit-btn.active {
+  background: #F9CB73; /* 활성화 */
+  opacity: 1;
+  cursor: pointer;
+}
+
+.signup-submit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.signup-submit-btn.active:hover {
+  background: #f5b94b;
+}
+
+.signup-submit-btn.active:active {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
 }
 
 .signup-message {
