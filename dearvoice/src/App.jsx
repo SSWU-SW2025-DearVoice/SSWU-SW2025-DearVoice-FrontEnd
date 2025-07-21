@@ -14,6 +14,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import VoiceLetterPage from "./pages/VoiceLetter";
 import SkyLetterPage from "./pages/SkyLetter";
+import SkyLetterPage02 from "./pages/SkyLetter02";
 
 // 마이페이지
 import MyPageHome from "./pages/mypage/MypageHome";
@@ -39,6 +40,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/voice" element={<VoiceLetterPage />} />
           <Route path="/sky" element={<SkyLetterPage />} />
+          <Route path="/sky02" element={<SkyLetterPage02 />} />
 
           {/* 마이페이지 라우트 */}
           <Route path="/mypage">
