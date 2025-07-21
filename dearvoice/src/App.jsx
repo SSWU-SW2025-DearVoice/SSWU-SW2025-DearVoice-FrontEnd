@@ -7,6 +7,8 @@ import Layout from "./components/Layout";
 import Intro from "./pages/IntroPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import FindPassword from "./pages/FindPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/onboarding";
 import Register from "./pages/Register";
 
@@ -28,9 +30,11 @@ function App() {
     <Router>
       <Routes>
         {/* 비로그인 페이지 */}
-        <Route path="/" element={<Onboarding />} />
+        <Route path="/" element={<Intro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/find-password" element={<FindPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/register" element={<Register />} />
 
