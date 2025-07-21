@@ -28,13 +28,16 @@ const Login = () => {
     }
     
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login/`, form, {
-        headers: { "Content-Type": "application/json" }
-      });
-      
-      // 로그인 성공 시 토큰 저장하고 바로 홈으로 이동
-      localStorage.setItem('token', response.data.token);
-      navigate("/home");
+    const response = await axios.post("http://127.0.0.1:8000/api/auth/login/", form, {
+      headers: { "Content-Type": "application/json" }
+    });
+
+    // ✅ access & refresh 토큰 저장
+    localStorage.setItem("accessToken", response.data.access);
+    localStorage.setItem("refreshToken", response.data.refresh);
+
+    // ✅ 로그인 성공 시 홈으로 이동
+    navigate("/home");
     } catch (err) {
       setModalType("error");
       setShowModal(true);

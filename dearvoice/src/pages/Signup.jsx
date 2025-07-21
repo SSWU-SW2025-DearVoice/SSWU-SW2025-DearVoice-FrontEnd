@@ -130,7 +130,7 @@ const Signup = () => {
       // passwordConfirm 제거하고 백엔드에 전송
       const { passwordConfirm, ...signupData } = form;
 
-      await axios.post("http://13.209.3.218:8000/signup/", signupData, {
+      await axios.post("http://127.0.0.1:8000/api/auth/signup/", signupData, {
         headers: { "Content-Type": "application/json" }
       });
       setShowModal(true); 
