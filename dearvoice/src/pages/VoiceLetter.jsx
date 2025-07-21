@@ -1,37 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../styles/LetterDetailCard.css";
 import "../styles/VoiceLetter.css";
+
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
 import recordCompleted from "../assets/images/record-complete.png";
 
-const VoiceLetter = ({ letter }) => {
+import { useTodayDate } from "../hooks/useTodayDate";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
+import { useSendStatus } from "../hooks/useSendStatus";
+import axios from "axios";
+
+const VoiceLetter = () => {
   const [recipient, setRecipient] = useState("");
   const [title, setTitle] = useState("");
-
-  const [today, setToday] = useState("");
   const [selectedColor, setSelectedColor] = useState("gray");
-
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const [isRecording, setIsRecording] = useState(false); // 녹음 중 여부
-  const [isRecorded, setIsRecorded] = useState(false); // 녹음 완료 여부
-  const [mediaRecorder, setMediaRecorder] = useState(null); // MediaRecorder 객체
-  const [recordedBlob, setRecordedBlob] = useState(null); // 녹음된 음성
+  const today = useTodayDate();
 
-  const [isSent, setIsSent] = useState(false);
+  const { isRecording, isRecorded, recordedBlob, handleRecordClick } =
+    useAudioRecorder();
 
-  const [isSending, setIsSending] = useState(false);
-
-  useEffect(() => {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    const todayString = `${yyyy}${mm}${dd}`;
-    setToday(todayString);
-  }, []);
+  const { isSending, isSent, handleSend } = useSendStatus();
 
   const setNow = () => {
     const now = new Date();
@@ -45,65 +37,26 @@ const VoiceLetter = ({ letter }) => {
     setTime(`${hh}:${min}`);
   };
 
-  const handleRecordClick = async () => {
-    if (isRecorded) return; // 완료된 후엔 클릭 비활성화
-
-    if (!isRecording) {
-      // 🎤 녹음 시작
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      const chunks = [];
-
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
-        setRecordedBlob(blob);
-        setIsRecording(false);
-        setIsRecorded(true);
-      };
-
-      recorder.start();
-      setMediaRecorder(recorder);
-      setIsRecording(true);
-    } else {
-      // ⏹ 녹음 중지
-      mediaRecorder.stop();
-    }
-  };
-
-  const handleSend = async () => {
-    if (!isFormComplete) return;
-
-    setIsSending(true); // 오버레이 표시
-
-    try {
-      // 예시용 데이터
-      const yourData = {
-        recipient,
-        title,
-        color: selectedColor,
-        date,
-        time,
-        // ...etc
-      };
-
-      await axios.post("/api/send", yourData);
-      setIsSent(true); // 전송 성공 후 버튼 색 변경
-    } catch (err) {
-      console.error("전송 실패", err);
-    } finally {
-      setIsSending(false); // 오버레이 숨김
-    }
-  };
-
   const isFormComplete = recipient && title && date && time && isRecorded;
+
+  const sendMyLetter = async () => {
+    const formData = new FormData();
+    formData.append("recipient", recipient);
+    formData.append("title", title);
+    formData.append("color", selectedColor);
+    formData.append("date", date);
+    formData.append("time", time);
+    formData.append("audio", recordedBlob);
+
+    await axios.post("/api/send", formData);
+  };
 
   return (
     <>
       <div className="mypage-title">
         <h2 className="mypage-top">음성 편지</h2>
       </div>
+
       <div className={`letterdetail-box letterdetail-audio ${selectedColor}`}>
         <div className="letterdetail-row">
           <span className="letterdetail-label">수신인ㅣ</span>
@@ -116,6 +69,7 @@ const VoiceLetter = ({ letter }) => {
             />
           </span>
         </div>
+
         <div className="letterdetail-row">
           <span className="letterdetail-label">제목ㅣ</span>
           <span className="letterdetail-input">
@@ -127,6 +81,7 @@ const VoiceLetter = ({ letter }) => {
             />
           </span>
         </div>
+
         <div className="letterdetail-row">
           <span className="letterdetail-label">편지지 색상ㅣ</span>
           <div className="color-options">
@@ -141,10 +96,12 @@ const VoiceLetter = ({ letter }) => {
             ))}
           </div>
         </div>
+
         <div className="letterdetail-row">
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
-          {/* <span className="letterdetail-text">{letter.text}</span> */}
+          {/* 음성 텍스트 변환 결과 표시 위치 */}
         </div>
+
         <div className="letterdetail-row date-time-row">
           <div className="datetime-inputs">
             <input
@@ -167,7 +124,7 @@ const VoiceLetter = ({ letter }) => {
           <button
             className="letterdetail-play"
             onClick={handleRecordClick}
-            disabled={isRecorded} // 녹음 완료되면 버튼 비활성화
+            disabled={isRecorded}
           >
             <img
               src={
@@ -183,18 +140,16 @@ const VoiceLetter = ({ letter }) => {
           </button>
         </div>
       </div>
+
       <div className="bottomButton">
         <button
           className={`sendButton ${isFormComplete ? "active" : ""}`}
-          onClick={() => {
-            if (!isFormComplete) return;
-            setIsSent(true); // 전송 실행
-            setTimeout(() => setIsSent(false), 1000); // 1초 후 다시 회색
-          }}
+          onClick={() => isFormComplete && handleSend(sendMyLetter)}
         >
-          전송하기
+          {isSent ? "전송 완료!" : "전송하기"}
         </button>
       </div>
+
       {isSending && (
         <div className="overlay">
           <div className="overlay-text">전송 중...</div>
