@@ -1,11 +1,18 @@
+// SkyLetter02.jsx
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
 import recordCompleted from "../assets/images/record-complete.png";
 import sending01 from "../assets/images/sending01.png";
 import sending02 from "../assets/images/sending02.png";
 import sending03 from "../assets/images/sending03.png";
+
+import { useTodayDate } from "../hooks/useTodayDate";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
+import { useSendStatus } from "../hooks/useSendStatus";
 
 const SkyLetter02 = () => {
   const location = useLocation();
@@ -19,15 +26,21 @@ const SkyLetter02 = () => {
     selectedColor: initColor,
   } = location.state || {};
 
+  const today = useTodayDate();
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [selectedColor, setSelectedColor] = useState(initColor || "gray");
 
-  const [isRecorded, setIsRecorded] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const { isRecording, isRecorded, handleRecordClick } = useAudioRecorder();
+
+  const {
+    isSending,
+    isSent,
+    handleSend: handleSendWithStatus,
+  } = useSendStatus();
+
   const [blinkImage, setBlinkImage] = useState(sending01);
 
   useEffect(() => {
@@ -35,7 +48,7 @@ const SkyLetter02 = () => {
     if (isSending && !isSent) {
       interval = setInterval(() => {
         setBlinkImage((prev) => (prev === sending01 ? sending02 : sending01));
-      }, 500); // 0.5초마다 깜빡
+      }, 500);
     }
     return () => clearInterval(interval);
   }, [isSending, isSent]);
@@ -48,28 +61,16 @@ const SkyLetter02 = () => {
     setTime(timeStr);
   };
 
-  const handleRecordClick = () => {
-    setIsRecording(true);
-    setTimeout(() => {
-      setIsRecorded(true);
-      setIsRecording(false);
-    }, 3000);
-  };
-
   const isFormComplete = title && date && time && isRecorded;
 
-  const today = new Date().toISOString().slice(0, 10);
-
   const handleSend = () => {
-    setIsSending(true);
-    setTimeout(() => {
-      setIsSending(false);
-      setIsSent(true);
-    }, 3000); // 예시: 3초 뒤 전송 완료
+    handleSendWithStatus(
+      () => new Promise((resolve) => setTimeout(resolve, 3000))
+    );
   };
 
   const handleReplyClick = () => {
-    navigate("../mypage/detail/received/1"); // 실제 LetterDetailCard.jsx 라우트에 맞게 수정
+    navigate("../mypage/detail/received/1");
   };
 
   return (
@@ -175,7 +176,7 @@ const SkyLetter02 = () => {
 
             {isSent && (
               <>
-                <img src={sending03} alt="sent" className="sending-img" />
+                <img src={sending03} alt="sent" className="sent-img" />
                 <div className="overlay-text">답장이 도착했어요!</div>
                 <button className="reply-btn" onClick={handleReplyClick}>
                   답장 보러가기

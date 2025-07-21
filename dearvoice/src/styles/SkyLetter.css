@@ -34,14 +34,19 @@
 }
 
 .sending-img {
-  width: 400px;
-  /* height: 100px; */
+  width: 340px;
+  /* margin-top: 250px; */
+}
+
+.sent-img {
+  width: 340px;
+  margin-top: 250px;
 }
 
 .reply-btn {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  background-color: #fbd34d;
+  margin-top: 160px;
+  padding: 16px 100px;
+  background-color: #f9cb73;
   border: none;
   border-radius: 10px;
   font-weight: bold;
