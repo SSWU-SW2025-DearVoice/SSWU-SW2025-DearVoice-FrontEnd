@@ -79,6 +79,7 @@ const VoiceLetter = () => {
 
   const isFormComplete = recipient && date && time && isRecorded; // title 제거 (모델에 없음)
 
+  // sendMyLetter 함수: 녹음 파일과 폼 데이터를 백엔드로 전송하고, transcript 상태 업데이트
   const sendMyLetter = async () => {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
@@ -130,6 +131,7 @@ const VoiceLetter = () => {
       } else {
         alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
       }
+
     }
   };
 
@@ -170,7 +172,7 @@ const VoiceLetter = () => {
 
         <div className="letterdetail-row">
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
-          <div className="transcript-section">
+          <div className="letterdetail-text">
             {isRecorded && (
               <button
                 className="transcribe-btn"
@@ -209,6 +211,11 @@ const VoiceLetter = () => {
             <button onClick={setNow}>현재 시각으로 설정하기</button>
           </div>
         </div>
+
+        {/* 녹음 완료 후에만 재생바 노출 */}
+        {recordedBlob && (
+          <audio controls src={URL.createObjectURL(recordedBlob)} />
+        )}
 
         <div className="letterdetail-audio">
           <span className="letterdetail-label">음성 녹음ㅣ</span>
