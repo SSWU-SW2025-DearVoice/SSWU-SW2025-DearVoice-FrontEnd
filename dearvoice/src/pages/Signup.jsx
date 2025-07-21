@@ -15,8 +15,10 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [emailCheck, setEmailCheck] = useState({ status: "", message: "" });
   const [idCheck, setIdCheck] = useState({ status: "", message: "" });
+  const [passwordLengthCheck, setPasswordLengthCheck] = useState({ status: "", message: "" });
   const [passwordCheck, setPasswordCheck] = useState({ status: "", message: "" });
   const [showModal, setShowModal] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -68,6 +70,24 @@ const Signup = () => {
     }
   }, [form.user_id]);
 
+// 비밀번호 길이 검증
+  useEffect(() => {
+    if (form.password && form.password.length > 0) {
+      const timer = setTimeout(() => {
+        if (form.password.length < 8) {
+          setPasswordLengthCheck({ status: "error", message: "비밀번호는 8자 이상이어야 합니다." });
+        } else {
+          setPasswordLengthCheck({ status: "success", message: "사용 가능한 비밀번호입니다." });
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setPasswordLengthCheck({ status: "", message: "" });
+    }
+  }, [form.password]);
+
+
   // 비밀번호 재확인 검증 (API 없이 클라이언트에서 처리) 디바운싱 말고 실시간 확인으로 바꾸는게 좋을까
   useEffect(() => {
     if (form.passwordConfirm) {
@@ -93,6 +113,7 @@ const Signup = () => {
   const isFormValid = 
     emailCheck.status === "success" && 
     idCheck.status === "success" && 
+    passwordLengthCheck.status === "success" &&
     passwordCheck.status === "success" &&
     form.name.trim() !== "";
 
@@ -183,6 +204,11 @@ const Signup = () => {
                 value={form.password}
                 onChange={handleChange}
               />
+              {passwordLengthCheck.message && (
+                <div className={`check-message ${passwordLengthCheck.status}`}>
+                  {passwordLengthCheck.message}
+                </div>
+              )}
             </div>
           </div>
           
