@@ -17,6 +17,7 @@ const VoiceLetter = () => {
   const [selectedColor, setSelectedColor] = useState("gray");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [transcript, setTranscript] = useState(""); // 음성 텍스트 변환 결과 상태 추가
 
   const today = useTodayDate();
 
@@ -39,16 +40,35 @@ const VoiceLetter = () => {
 
   const isFormComplete = recipient && title && date && time && isRecorded;
 
+  // sendMyLetter 함수: 녹음 파일과 폼 데이터를 백엔드로 전송하고, transcript 상태 업데이트
   const sendMyLetter = async () => {
+    if (!recordedBlob) {
+      alert("녹음된 음성 파일이 없습니다.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("recipient", recipient);
     formData.append("title", title);
     formData.append("color", selectedColor);
     formData.append("date", date);
     formData.append("time", time);
-    formData.append("audio", recordedBlob);
+    formData.append("audio_file", recordedBlob, "voice.mp3"); // 백엔드 모델의 필드명에 맞춰서 key 지정
 
-    await axios.post("/api/send", formData);
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:8000/letter/create/",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      setTranscript(res.data.transcript || "변환된 텍스트가 없습니다.");
+    } catch (error) {
+      console.error("전송 실패", error);
+      setTranscript("텍스트 변환 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -99,7 +119,9 @@ const VoiceLetter = () => {
 
         <div className="letterdetail-row">
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
-          {/* 음성 텍스트 변환 결과 표시 위치 */}
+          <span className="letterdetail-text">
+            {transcript || "텍스트 변환 대기 중..."}
+          </span>
         </div>
 
         <div className="letterdetail-row date-time-row">
@@ -119,6 +141,11 @@ const VoiceLetter = () => {
             <button onClick={setNow}>현재 시각으로 설정하기</button>
           </div>
         </div>
+
+        {/* 녹음 완료 후에만 재생바 노출 */}
+        {recordedBlob && (
+          <audio controls src={URL.createObjectURL(recordedBlob)} />
+        )}
 
         <div className="letterdetail-audio">
           <button
@@ -145,6 +172,7 @@ const VoiceLetter = () => {
         <button
           className={`sendButton ${isFormComplete ? "active" : ""}`}
           onClick={() => isFormComplete && handleSend(sendMyLetter)}
+          disabled={isSending}
         >
           {isSent ? "전송 완료!" : "전송하기"}
         </button>
