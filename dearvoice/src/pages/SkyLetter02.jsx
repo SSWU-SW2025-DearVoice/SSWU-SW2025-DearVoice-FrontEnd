@@ -1,7 +1,6 @@
-// SkyLetter02.jsx
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
@@ -32,16 +31,19 @@ const SkyLetter02 = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [selectedColor, setSelectedColor] = useState(initColor || "gray");
+  const [transcript, setTranscript] = useState("");
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [blinkImage, setBlinkImage] = useState(sending01);
 
-  const { isRecording, isRecorded, handleRecordClick } = useAudioRecorder();
+  const { isRecording, isRecorded, handleRecordClick, recordedBlob } =
+    useAudioRecorder();
 
   const {
     isSending,
     isSent,
     handleSend: handleSendWithStatus,
   } = useSendStatus();
-
-  const [blinkImage, setBlinkImage] = useState(sending01);
 
   useEffect(() => {
     let interval;
@@ -55,22 +57,112 @@ const SkyLetter02 = () => {
 
   const setNow = () => {
     const now = new Date();
-    const todayStr = now.toISOString().slice(0, 10);
-    const timeStr = now.toTimeString().slice(0, 5);
-    setDate(todayStr);
-    setTime(timeStr);
+    setDate(now.toISOString().slice(0, 10));
+    setTime(now.toTimeString().slice(0, 5));
   };
 
   const isFormComplete = title && date && time && isRecorded;
 
-  const handleSend = () => {
-    handleSendWithStatus(
-      () => new Promise((resolve) => setTimeout(resolve, 3000))
-    );
-  };
-
   const handleReplyClick = () => {
     navigate("../mypage/detail/received/1");
+  };
+
+  const transcribeAudio = async () => {
+    if (!recordedBlob) return;
+
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      navigate("/login");
+      return;
+    }
+
+    setIsTranscribing(true);
+    try {
+      const formData = new FormData();
+      formData.append("audio_file", recordedBlob);
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/skyvoice/transcribe/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data && response.data.transcript) {
+        setTranscript(response.data.transcript);
+      }
+    } catch (error) {
+      alert(
+        `음성을 텍스트로 변환하는데 실패했습니다: ${
+          error.response?.data?.error || error.message
+        }`
+      );
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isRecorded && recordedBlob) {
+      transcribeAudio();
+    }
+  }, [isRecorded, recordedBlob]);
+
+  const sendSkyLetter = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("gender", gender);
+      formData.append("age", age);
+      formData.append("category", category);
+      formData.append("paper_color", selectedColor);
+      formData.append("title", title);
+      formData.append("scheduled_at", `${date}T${time}:00`);
+      formData.append("audio_file", recordedBlob);
+      if (transcript) {
+        formData.append("transcript", transcript);
+      }
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/skyvoice/create/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data && response.data.transcript) {
+        setTranscript(response.data.transcript);
+      }
+
+      setShowModal(true);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/login");
+      } else if (err.response?.status === 400) {
+        alert("입력 정보를 확인해주세요.");
+      } else {
+        alert("하늘 편지 전송에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
+  };
+
+  const handleSend = () => {
+    handleSendWithStatus(sendSkyLetter);
   };
 
   return (
@@ -112,10 +204,34 @@ const SkyLetter02 = () => {
 
         <div className="letterdetail-row">
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
-          <span className="letterdetail-text"> {/* Placeholder */} </span>
+          <div className="letterdetail-text">
+            {isTranscribing ? (
+              <div style={{ color: "#007bff", fontSize: "14px" }}>
+                음성을 텍스트로 변환 중...
+              </div>
+            ) : transcript ? (
+              <div className="transcript-result">
+                <div className="transcript-text">{transcript}</div>
+              </div>
+            ) : isRecorded ? (
+              <div style={{ color: "#999", fontSize: "14px" }}>
+                텍스트 변환을 준비 중입니다.
+              </div>
+            ) : (
+              <div style={{ color: "#999", fontSize: "14px" }}>
+                녹음 완료 후 자동으로 텍스트로 변환됩니다.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="letterdetail-row date-time-row">
+          <span className="letterdetail-label-exception">
+            시간 설정ㅣ
+            <button className="datetime-button" onClick={setNow}>
+              현재 시각으로
+            </button>
+          </span>
           <div className="datetime-inputs">
             <input
               type="date"
@@ -128,10 +244,15 @@ const SkyLetter02 = () => {
               onChange={(e) => setTime(e.target.value)}
             />
           </div>
-          <div className="datetime-button">
-            <button onClick={setNow}>현재 시각으로 설정하기</button>
-          </div>
         </div>
+
+        {recordedBlob && (
+          <audio
+            controls
+            src={URL.createObjectURL(recordedBlob)}
+            className="custom-audio"
+          />
+        )}
 
         <div className="letterdetail-audio">
           <button
@@ -157,32 +278,36 @@ const SkyLetter02 = () => {
       <div className="bottomButton">
         <button
           className={`sendButton ${isFormComplete ? "active" : ""}`}
-          disabled={!isFormComplete}
           onClick={handleSend}
+          disabled={!isFormComplete || isSending}
         >
           전송하기
         </button>
       </div>
 
-      {(isSending || isSent) && (
-        <div className="overlay">
-          <div className="overlay-inner">
-            {isSending && (
-              <>
-                <img src={blinkImage} alt="sending" className="sending-img" />
-                <div className="overlay-text">전송 중...</div>
-              </>
-            )}
+      {/* 전송 중 모달 */}
+      {isSending && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div className="modal-content">
+              <img className="letterbefore" src={blinkImage} alt="전송 중" />
+              <h3>음성 편지 전송 중</h3>
+            </div>
+          </div>
+        </div>
+      )}
 
-            {isSent && (
-              <>
-                <img src={sending03} alt="sent" className="sent-img" />
-                <div className="overlay-text">답장이 도착했어요!</div>
-                <button className="reply-btn" onClick={handleReplyClick}>
-                  답장 보러가기
-                </button>
-              </>
-            )}
+      {/* 전송 완료 모달 */}
+      {showModal && isSent && (
+        <div className="modal-overlay" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content">
+              <img className="lettercomplete" src={sending03} alt="전송 완료" />
+              <h3>답장이 도착했어요!</h3>
+              <button className="modal-button" onClick={handleReplyClick}>
+                답장 보러가기
+              </button>
+            </div>
           </div>
         </div>
       )}
