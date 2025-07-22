@@ -8,8 +8,7 @@ export const useSendStatus = () => {
     setIsSending(true);
     try {
       await sendFunction();
-      setIsSent(true);
-      setTimeout(() => setIsSent(false), 1500);
+      setIsSent(true); // 모달 뜸 - 자동으로 사라지지 않음
     } catch (err) {
       console.error("전송 실패", err);
     } finally {
@@ -17,9 +16,17 @@ export const useSendStatus = () => {
     }
   };
 
+  // 상태 초기화 함수 추가
+  const resetStatus = () => {
+    setIsSending(false);
+    setIsSent(false);
+  };
+
   return {
     isSending,
     isSent,
+    setIsSent,
     handleSend,
+    resetStatus,
   };
 };
