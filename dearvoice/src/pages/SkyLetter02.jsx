@@ -61,7 +61,8 @@ const SkyLetter02 = () => {
     setTime(now.toTimeString().slice(0, 5));
   };
 
-  const isFormComplete = title && date && time && isRecorded;
+  const isFormComplete = date && time && isRecorded;
+  // const isFormComplete = title && date && time && isRecorded;
 
   const handleReplyClick = () => {
     navigate("../mypage/detail/received/1");
@@ -113,20 +114,22 @@ const SkyLetter02 = () => {
   }, [isRecorded, recordedBlob]);
 
   const sendSkyLetter = async () => {
+    console.log("sendSkyLetter 호출됨");
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
+      console.log("토큰 없음");
       navigate("/login");
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("gender", gender);
-      formData.append("age", age);
-      formData.append("category", category);
-      formData.append("paper_color", selectedColor);
-      formData.append("title", title);
+      formData.append("receiver_name", name);
+      formData.append("receiver_gender", gender);
+      formData.append("receiver_age", age);
+      formData.append("receiver_type", category);
+      // formData.append("paper_color", selectedColor);
+      // formData.append("title", title);
       formData.append("scheduled_at", `${date}T${time}:00`);
       formData.append("audio_file", recordedBlob);
       if (transcript) {
@@ -144,20 +147,23 @@ const SkyLetter02 = () => {
         }
       );
 
+      console.log("API 응답 데이터:", response.data);
+
       if (response.data && response.data.transcript) {
         setTranscript(response.data.transcript);
       }
 
       setShowModal(true);
-    } catch (err) {
-      if (err.response?.status === 401) {
+    } catch (error) {
+      if (error.response?.status === 401) {
         alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
         navigate("/login");
-      } else if (err.response?.status === 400) {
+      } else if (error.response?.status === 400) {
         alert("입력 정보를 확인해주세요.");
       } else {
         alert("하늘 편지 전송에 실패했습니다. 다시 시도해주세요.");
       }
+      console.error("API 호출 에러:", error);
     }
   };
 
