@@ -1,4 +1,4 @@
-//mypage letterdetailcard에서 전달된 음성 듣기 로직
+// //mypage letterdetailcard에서 전달된 음성 듣기 로직
 import { useRef, useState } from "react";
 
 export default function useAudioPlayer(audioUrl) {
@@ -8,13 +8,17 @@ export default function useAudioPlayer(audioUrl) {
 
   const handlePlayClick = () => {
     if (!isPlaying) {
-      audioRef.current.play();
+      audioRef.current.play().catch((e) => {
+        console.log("재생 중단됨:", e);
+      });
       setIsPaused(false);
     } else if (!isPaused) {
       audioRef.current.pause();
       setIsPaused(true);
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch((e) => {
+        console.log("재생 중단됨:", e);
+      });
       setIsPaused(false);
     }
   };
@@ -23,12 +27,17 @@ export default function useAudioPlayer(audioUrl) {
     setIsPlaying(true);
     setIsPaused(false);
   };
+
   const handleAudioEnded = () => {
     setIsPlaying(false);
     setIsPaused(false);
   };
+
   const handleAudioPause = () => {
-    if (audioRef.current && audioRef.current.currentTime < audioRef.current.duration) {
+    if (
+      audioRef.current &&
+      audioRef.current.currentTime < audioRef.current.duration
+    ) {
       setIsPaused(true);
     } else {
       setIsPaused(false);

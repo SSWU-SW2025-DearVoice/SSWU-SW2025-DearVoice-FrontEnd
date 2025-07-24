@@ -61,11 +61,30 @@ const SkyLetter02 = () => {
     setTime(now.toTimeString().slice(0, 5));
   };
 
-  const isFormComplete = date && time && isRecorded;
-  // const isFormComplete = title && date && time && isRecorded;
+  const isFormComplete = title && date && time && isRecorded;
 
   const handleReplyClick = () => {
     navigate("../mypage/detail/received/1");
+  };
+
+  const uploadToS3 = async (fileBlob) => {
+    const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
+
+    const formData = new FormData();
+    formData.append("file", fileBlob, "recording.webm");
+
+    const response = await axios.post(
+      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data.url; // 🔹 실제 S3 URL
   };
 
   const transcribeAudio = async () => {
@@ -79,28 +98,31 @@ const SkyLetter02 = () => {
 
     setIsTranscribing(true);
     try {
-      const formData = new FormData();
-      formData.append("audio_file", recordedBlob);
+      // 1. S3에 업로드
+      const s3Url = await uploadToS3(recordedBlob);
 
+      console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
+
+      // 2. audio_url을 JSON으로 전송
       const response = await axios.post(
-        "http://127.0.0.1:8000/skyvoice/transcribe/",
-        formData,
+        "http://127.0.0.1:8000/letters/transcribe/",
+        { audio_url: s3Url },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
 
       if (response.data && response.data.transcript) {
         setTranscript(response.data.transcript);
+      } else {
+        alert("STT 변환 결과를 받지 못했습니다.");
       }
     } catch (error) {
       alert(
-        `음성을 텍스트로 변환하는데 실패했습니다: ${
-          error.response?.data?.error || error.message
-        }`
+        `음성 텍스트 변환 실패: ${error.response?.data?.error || error.message}`
       );
     } finally {
       setIsTranscribing(false);
@@ -114,10 +136,8 @@ const SkyLetter02 = () => {
   }, [isRecorded, recordedBlob]);
 
   const sendSkyLetter = async () => {
-    console.log("sendSkyLetter 호출됨");
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      console.log("토큰 없음");
       navigate("/login");
       return;
     }
@@ -128,8 +148,8 @@ const SkyLetter02 = () => {
       formData.append("receiver_gender", gender);
       formData.append("receiver_age", age);
       formData.append("receiver_type", category);
-      // formData.append("paper_color", selectedColor);
-      // formData.append("title", title);
+      formData.append("paper_color", selectedColor);
+      formData.append("title", title);
       formData.append("scheduled_at", `${date}T${time}:00`);
       formData.append("audio_file", recordedBlob);
       if (transcript) {
@@ -146,8 +166,6 @@ const SkyLetter02 = () => {
           },
         }
       );
-
-      console.log("API 응답 데이터:", response.data);
 
       if (response.data && response.data.transcript) {
         setTranscript(response.data.transcript);
