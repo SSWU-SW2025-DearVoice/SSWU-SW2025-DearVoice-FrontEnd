@@ -5,14 +5,15 @@ import "../styles/VoiceLetter.css";
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
 import recordCompleted from "../assets/images/record-complete.png";
-import letterbefore from "../assets/images/letter-before.png";
-import lettercomplete from "../assets/images/letter-complete.svg";
+import letterbefore from "../assets/images/letter-before.png"
+import lettercomplete from "../assets/images/letter-complete.svg"
 
 import { useTodayDate } from "../hooks/useTodayDate";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { useSendStatus } from "../hooks/useSendStatus";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+ 
 
 const VoiceLetter = () => {
   const [recipient, setRecipient] = useState("");
@@ -30,8 +31,7 @@ const VoiceLetter = () => {
   const { isRecording, isRecorded, recordedBlob, handleRecordClick } =
     useAudioRecorder();
 
-  const { isSending, isSent, setIsSent, handleSend, resetStatus } =
-    useSendStatus();
+  const { isSending, isSent, setIsSent, handleSend, resetStatus } = useSendStatus();
 
   // 편지 생성 완료 시 모달 표시
   useEffect(() => {
@@ -48,29 +48,29 @@ const VoiceLetter = () => {
     setDate("");
     setTime("");
     setTranscript("");
-
+    
     // 전송 상태 초기화
     resetStatus(); // 또는 setIsSent(false)
-
+    
     // 모달 닫기
     setShowModal(false);
-
+    
     // 홈으로 이동
-    navigate("/home");
+    navigate('/home');
   };
 
   // ESC 키로 모달 닫기 방지
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape" && showModal) {
+      if (e.key === 'Escape' && showModal) {
         e.preventDefault();
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-
+    document.addEventListener('keydown', handleKeyDown);
+    
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [showModal]);
 
@@ -117,11 +117,7 @@ const VoiceLetter = () => {
       } else {
       }
     } catch (error) {
-      alert(
-        `음성을 텍스트로 변환하는데 실패했습니다: ${
-          error.response?.data?.error || error.message
-        }`
-      );
+      alert(`음성을 텍스트로 변환하는데 실패했습니다: ${error.response?.data?.error || error.message}`);
     } finally {
       setIsTranscribing(false);
     }
@@ -138,49 +134,55 @@ const VoiceLetter = () => {
 
   // 편지 생성
   const sendMyLetter = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+
+    // ✅ 백엔드에서 recipients: List[Dict] 형식으로 받도록 기대함
+    const recipients = [{ email: recipient }];
+    formData.append("recipients", JSON.stringify(recipients));
+
+    formData.append("paper_color", selectedColor);
+    formData.append("scheduled_at", `${date}T${time}:00`);
+    formData.append("audio_file", recordedBlob);
+
+    if (transcript) {
+      formData.append("transcript", transcript);
+    }
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/letters/create/",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.data && response.data.transcript) {
+      setTranscript(response.data.transcript);
+    }
+
+  } catch (err) {
+    if (err.response?.status === 401) {
+      alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
       navigate("/login");
-      return;
+    } else if (err.response?.status === 400) {
+      alert("입력 정보를 확인해주세요.");
+      console.log("recipients:", JSON.stringify(recipient));
+    } else {
+      alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
     }
+  }
+};
 
-    try {
-      const formData = new FormData();
-      formData.append("receiver_email", recipient);
-      formData.append("paper_color", selectedColor);
-      formData.append("scheduled_at", `${date}T${time}:00`);
-      formData.append("audio_file", recordedBlob);
-
-      if (transcript) {
-        formData.append("transcript", transcript);
-      }
-
-      const response = await axios.post(
-        "http://127.0.0.1:8000/letters/create/",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // 편지 생성 응답에서 transcript 업데이트
-      if (response.data && response.data.transcript) {
-        setTranscript(response.data.transcript);
-      }
-    } catch (err) {
-      if (err.response?.status === 401) {
-        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-        navigate("/login");
-      } else if (err.response?.status === 400) {
-        alert("입력 정보를 확인해주세요.");
-      } else {
-        alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
-      }
-    }
-  };
 
   return (
     <>
@@ -221,7 +223,7 @@ const VoiceLetter = () => {
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
           <div className="letterdetail-text">
             {isTranscribing ? (
-              <div style={{ color: "#007bff", fontSize: "14px" }}>
+              <div style={{ color: '#007bff', fontSize: '14px' }}>
                 음성을 텍스트로 변환 중..
               </div>
             ) : transcript && transcript.length > 0 ? (
@@ -229,11 +231,11 @@ const VoiceLetter = () => {
                 <div className="transcript-text">{transcript}</div>
               </div>
             ) : isRecorded ? (
-              <div style={{ color: "#999", fontSize: "14px" }}>
+              <div style={{ color: '#999', fontSize: '14px' }}>
                 텍스트 변환을 준비 중입니다.
               </div>
             ) : (
-              <div style={{ color: "#999", fontSize: "14px" }}>
+              <div style={{ color: '#999', fontSize: '14px' }}>
                 녹음 완료 후 자동으로 텍스트로 변환됩니다.
               </div>
             )}
@@ -241,12 +243,7 @@ const VoiceLetter = () => {
         </div>
 
         <div className="letterdetail-row date-time-row">
-          <span className="letterdetail-label-exception">
-            시간 설정ㅣ
-            <button className="datetime-button" onClick={setNow}>
-              현재 시각으로
-            </button>
-          </span>
+          <span className="letterdetail-label">예약 전송ㅣ</span>
           <div className="datetime-inputs">
             <input
               type="date"
@@ -261,14 +258,13 @@ const VoiceLetter = () => {
               required
             />
           </div>
+          <div className="datetime-button">
+            <button onClick={setNow}>현재 시각으로 설정하기</button>
+          </div>
         </div>
 
         {recordedBlob && (
-          <audio
-            controls
-            src={URL.createObjectURL(recordedBlob)}
-            className="custom-audio"
-          />
+          <audio controls src={URL.createObjectURL(recordedBlob)} />
         )}
 
         <div className="letterdetail-audio">
@@ -297,8 +293,7 @@ const VoiceLetter = () => {
           className={`sendButton ${isFormComplete ? "active" : ""}`}
           onClick={() => isFormComplete && handleSend(sendMyLetter)}
           disabled={!isFormComplete || isSending}
-        >
-          전송하기
+        >전송하기
         </button>
       </div>
 
@@ -316,22 +311,21 @@ const VoiceLetter = () => {
 
       {/* 편지 전송 완료 모달 */}
       {showModal && isSent && (
-        <div
+        <div 
           className="modal-overlay"
           onClick={(e) => e.stopPropagation()} // 배경 클릭 방지
         >
-          <div
+          <div 
             className="modal-box"
             onClick={(e) => e.stopPropagation()} // 모달 클릭 시 이벤트 전파 방지
           >
             <div className="modal-content">
-              <img
-                className="lettercomplete"
-                src={lettercomplete}
-                alt="전송 완료"
-              />
+              <img className="lettercomplete" src={lettercomplete} alt="전송 완료" />
               <h3>음성 편지 전송 완료!</h3>
-              <button className="modal-button" onClick={handleGoHome}>
+              <button 
+                className="modal-button"
+                onClick={handleGoHome}
+              >
                 홈으로
               </button>
             </div>
