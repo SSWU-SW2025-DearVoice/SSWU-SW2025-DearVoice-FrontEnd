@@ -1,56 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../styles/ReceivedList.css';
-import arrow from '../../assets/images/arrow.png'
-import arrowstart from '../../assets/images/arrow-start.png'
-
-const dummyData = [
-  { id: 1,
-    title: "할머니, 안녕하세요!",
-    user: "@kimgrandma",
-    text: "할머니 요즘 날씨가 더워졌는데, 잘 지내고 계시나요? 할머니 요즘 날씨가 더워졌는데, 잘 지내고 계세요?",
-    date: "2025.06.10 8:30 AM",
-    color: "pink",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-  { id: 2, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 3,
-    title: "내일 노는 거 맞지?",
-    user: "@bobbyindaeyo",
-    text: "아 왤케 연락을 안 봄? 내일 노는 거 맞지? 점심은 뭐 먹을래? 빨리 보고 싶다. 안 본 지 너무 오래됨",
-    date: "2025.06.21 12:21 PM",
-    color: "green",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-  { id: 4, title: "할머니, 안녕하세요sdfsdfdsdff!", user: "@kimgrandmasdfsdfdf", color: "green" },
-  { id: 5, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 6, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-  { id: 7, title: "행복한 하루", user: "@jeongbami", color: "blue" },
-  { id: 8, title: "고마워요ㅈㄷㄱㄷㅈㄱㄷㄱㅈㄷㄱㄷ!", user: "@bobbyindaeyo", color: "yellow" },
-  { id: 9, title: "잘 지내시죠?", user: "@kimgrandma", color: "green" },
-  { id: 10, title: "응원합니다", user: "@jeongbami", color: "blue" },
-  { id: 11, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-  { id: 1, title: "할머니, 안녕하세요!", user: "@kimgrandma", color: "pink" },
-  { id: 2, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 3, title: "보고 싶다erer!!!", user: "@boeeerbbyindaeyo", color: "yellow" },
-  { id: 4, title: "할머니, 안녕하세요sdfsdfdsdff!", user: "@kimgrandmasdfsdfdf", color: "green" },
-  { id: 5, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 6, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-  { id: 7, title: "행복한 하루", user: "@jeongbami", color: "blue" },
-  { id: 8, title: "고마워요!", user: "@bobbyindaeyo", color: "yellow" },
-  { id: 9, title: "잘 지내ㄴㅇㄹㅇㄴㅇㄹㅇ시죠?", user: "@kimㄴㅇㄹㅇgrandma", color: "green" },
-  { id: 10, title: "응원합니다", user: "@jeongbami", color: "blue" },
-  { id: 11, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-  { id: 1, title: "할머니, 안녕하세요!", user: "@kimgrandma", color: "pink" },
-  { id: 2, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 3, title: "보고 싶다!!!", user: "@bobbyindaeyo", color: "yellow" },
-  { id: 4, title: "할머니, 안녕하세요sdfsdfdsdff!", user: "@kimgrandmasdfsdfdf", color: "green" },
-  { id: 5, title: "슬픈 하루..", user: "@jeongbami", color: "blue" },
-  { id: 6, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-  { id: 7, title: "행복한 하루", user: "@jeongbami", color: "blue" },
-  { id: 8, title: "고마워요!", user: "@bobbyindaeyo", color: "yellow" },
-  { id: 9, title: "잘 지내시죠?", user: "@kimgrandma", color: "green" },
-  { id: 10, title: "응원합니다", user: "@jeongbami", color: "blue" },
-  { id: 11, title: "새로운 하루", user: "@kimgrandma", color: "pink" },
-];
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../styles/ReceivedList.css";
+import arrow from "../../assets/images/arrow.png";
+import arrowstart from "../../assets/images/arrow-start.png";
+import useLetters from "../../hooks/useLetters"; // 추가
 
 const colorClass = {
   green: "sent-item-green",
@@ -58,54 +11,70 @@ const colorClass = {
   yellow: "sent-item-yellow",
   blue: "sent-item-blue",
   pink: "sent-item-pink",
-}; //편지 배경 색상 지정용
+};
 
-const ITEMS_PER_PAGE = 5; //한 페이지 당 5개 보여줌 페이지네이션
-const MAX_PAGE_BUTTONS = 5; // 한 그룹에 보여줄 페이지 버튼 수
+const ITEMS_PER_PAGE = 5;
+const MAX_PAGE_BUTTONS = 5;
 
 const ReceivedList = () => {
+  const { letters, loading } = useLetters(); // API에서 편지 목록 가져오기
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
-  const totalPages = Math.ceil(dummyData.length / ITEMS_PER_PAGE);
+  if (loading) return <div>로딩 중...</div>;
+  if (!letters || letters.length === 0) return <div>받은 편지가 없습니다.</div>;
 
-  // 페이지네이션 그룹 계산
+  const totalPages = Math.ceil(letters.length / ITEMS_PER_PAGE);
+
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
 
-  // 최신순 정렬 및 페이지 데이터 추출
-  const pageData = dummyData
-    .slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  // 최신순 정렬 + 페이지 처리 (여기서 letters 배열이 API 응답 데이터여야 함)
+  const sortedLetters = [...letters].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+
+  const pageData = sortedLetters.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="receivedlist-wrapper">
       <h2 className="receivedlist-title">내 보관소 - 받은 편지함</h2>
       <div className="receivedlist-list">
-        {pageData.map(item => (
-          <div key={item.id} className={`received-item ${colorClass[item.color]}`}>
+        {pageData.map((item, index) => (
+          <div
+            key={`${item.id}-${(page - 1) * ITEMS_PER_PAGE + index}`}
+            className={`received-item ${
+              colorClass[item.paper_color || "gray"]
+            }`}
+          >
             <span className="received-title">
-              [ {item.title} ]
+              [ {item.transcript || "제목 없음"} ]
             </span>
             <span className="received-user">
-              {item.user}
+              {item.sender?.username ||
+                (typeof item.sender === "string" ? item.sender : "알 수 없음")}
             </span>
+
             <button
               className="received-detail"
               onClick={() => navigate(`/mypage/detail/received/${item.id}`)}
             >
-              <img src={arrow} className='arrow' alt="arrow" />
+              <img src={arrow} className="arrow" alt="arrow" />
             </button>
           </div>
         ))}
       </div>
       <div className="receivedlist-pagination">
         <button
-          className='pagination-arrow'
+          className="pagination-arrow"
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          <img src={arrowstart} className='arrow-start' alt="prev"/>
+          <img src={arrowstart} className="arrow-start" alt="prev" />
         </button>
 
         {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => {
@@ -115,16 +84,18 @@ const ReceivedList = () => {
               key={pageNum}
               className={`pagination-num ${page === pageNum ? "active" : ""}`}
               onClick={() => setPage(pageNum)}
-            >{pageNum}</button>
+            >
+              {pageNum}
+            </button>
           );
         })}
 
         <button
-          className='pagination-arrow'
+          className="pagination-arrow"
           disabled={page === totalPages}
           onClick={() => setPage(page + 1)}
         >
-          <img src={arrow} className='arrow-end' alt="next"/>
+          <img src={arrow} className="arrow-end" alt="next" />
         </button>
       </div>
     </div>
