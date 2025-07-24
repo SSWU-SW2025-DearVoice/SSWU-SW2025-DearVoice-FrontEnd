@@ -35,6 +35,7 @@ const SkyLetter02 = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [blinkImage, setBlinkImage] = useState(sending01);
+  const [letterId, setLetterId] = useState(null);
 
   const { isRecording, isRecorded, handleRecordClick, recordedBlob } =
     useAudioRecorder();
@@ -63,8 +64,16 @@ const SkyLetter02 = () => {
 
   const isFormComplete = title && date && time && isRecorded;
 
+  // const handleReplyClick = () => {
+  //   navigate("../mypage/detail/received/1");
+  // };
+
   const handleReplyClick = () => {
-    navigate("../mypage/detail/received/1");
+    if (letterId) {
+      navigate(`/mypage/detail/received/${letterId}`);
+    } else {
+      alert("답장 페이지로 이동할 편지 ID가 없습니다.");
+    }
   };
 
   const uploadToS3 = async (fileBlob) => {
@@ -84,7 +93,7 @@ const SkyLetter02 = () => {
       }
     );
 
-    return response.data.url; // 🔹 실제 S3 URL
+    return response.data.url;
   };
 
   const transcribeAudio = async () => {
@@ -152,8 +161,11 @@ const SkyLetter02 = () => {
       formData.append("title", title);
       formData.append("scheduled_at", `${date}T${time}:00`);
       formData.append("audio_file", recordedBlob);
+      // if (transcript) {
+      //   formData.append("transcript", transcript);
+      // }
       if (transcript) {
-        formData.append("transcript", transcript);
+        formData.append("content_text", transcript);
       }
 
       const response = await axios.post(
@@ -167,8 +179,12 @@ const SkyLetter02 = () => {
         }
       );
 
-      if (response.data && response.data.transcript) {
-        setTranscript(response.data.transcript);
+      // if (response.data && response.data.transcript) {
+      //   setTranscript(response.data.transcript);
+      // }
+
+      if (response.data && response.data.id) {
+        setLetterId(response.data.id);
       }
 
       setShowModal(true);

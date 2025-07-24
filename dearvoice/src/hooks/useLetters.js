@@ -6,20 +6,23 @@ const useLetters = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("/letters/list/", {
-        //   .get("http://127.0.0.1:8000/letters/list/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`, // 백틱 사용
-        },
-      })
-      .then((res) => {
+    const fetchLetters = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const res = await axios.get("http://localhost:8000/skyvoice/list/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setLetters(res.data);
-      })
-      .catch((err) => {
-        console.error("레터 가져오기 실패", err);
-      })
-      .finally(() => setLoading(false));
+      } catch (err) {
+        console.error("편지 목록 불러오기 실패", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLetters();
   }, []);
 
   return { letters, loading };

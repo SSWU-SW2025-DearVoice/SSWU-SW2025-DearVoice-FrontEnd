@@ -102,11 +102,15 @@ function ReceivedLetterDetail() {
       try {
         setLoading(true);
         const token = localStorage.getItem("access_token");
-        const response = await axios.get(`/letters/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // const response = await axios.get(`/letters/${id}/`, {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/skyvoice/${id}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setLetter(response.data);
       } catch (err) {
         setError("편지를 불러오는 중 오류가 발생했습니다.");
@@ -133,6 +137,18 @@ function ReceivedLetterDetail() {
         내 보관소 - 받은 편지함
       </div>
       <LetterDetailCard letter={letter} {...audioProps} />
+      {letter.skyvoice_reply && (
+        <div className="reply-section">
+          <h3>📬 답장 내용</h3>
+          <p>{letter.skyvoice_reply.reply_text}</p>
+          {letter.skyvoice_reply.reply_voice_file && (
+            <audio
+              controls
+              src={letter.skyvoice_reply.reply_voice_file}
+            ></audio>
+          )}
+        </div>
+      )}
     </div>
   );
 }
