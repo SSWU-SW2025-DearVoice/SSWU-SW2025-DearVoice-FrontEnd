@@ -167,33 +167,33 @@ const VoiceLetter = () => {
   }
 
   try {
-    const formData = new FormData();
+    const s3Url = await uploadToS3(recordedBlob); // 🔹 반드시 S3 업로드 먼저
 
-    // ✅ 백엔드에서 recipients: List[Dict] 형식으로 받도록 기대함
     const recipients = [{ email: recipient }];
-    formData.append("recipients", JSON.stringify(recipients));
 
-    formData.append("paper_color", selectedColor);
-    formData.append("scheduled_at", `${date}T${time}:00`);
-    formData.append("audio_file", recordedBlob);
-
-    if (transcript) {
-      formData.append("transcript", transcript);
-    }
+    const payload = {
+      receiver_list: [{ email: recipient }], 
+      paper_color: selectedColor,
+      scheduled_at: `${date}T${time}:00`,
+      audio_url: s3Url,
+      transcript: transcript,
+    };
 
     const response = await axios.post(
       "http://127.0.0.1:8000/letters/create/",
-      formData,
+      payload,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       }
     );
 
-    if (response.data && response.data.transcript) {
-      setTranscript(response.data.transcript);
+    if (response.status === 201) {
+      setIsSent(true); // 성공 시 모달 표시
+    } else {
+      alert("편지 전송 실패: 알 수 없는 오류");
     }
 
   } catch (err) {
@@ -202,7 +202,7 @@ const VoiceLetter = () => {
       navigate("/login");
     } else if (err.response?.status === 400) {
       alert("입력 정보를 확인해주세요.");
-      console.log("recipients:", JSON.stringify());
+      console.log("보낸 데이터:", JSON.stringify(recipients));
     } else {
       alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
     }
