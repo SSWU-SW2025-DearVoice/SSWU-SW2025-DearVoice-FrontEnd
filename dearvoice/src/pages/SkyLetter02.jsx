@@ -67,26 +67,6 @@ const SkyLetter02 = () => {
     navigate("../mypage/detail/received/1");
   };
 
-  const uploadToS3 = async (fileBlob) => {
-    const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
-
-    const formData = new FormData();
-    formData.append("file", fileBlob, "recording.webm");
-
-    const response = await axios.post(
-      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // 🔥 accessToken 추가
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    return response.data.url; // 🔹 실제 S3 URL
-  };
-
   const transcribeAudio = async () => {
     if (!recordedBlob) return;
 
@@ -98,19 +78,17 @@ const SkyLetter02 = () => {
 
     setIsTranscribing(true);
     try {
-      // 1. S3에 업로드
-      const s3Url = await uploadToS3(recordedBlob);
+      // 🔥 S3 업로드 없이 바로 파일 전송
+      const formData = new FormData();
+      formData.append("audio_file", recordedBlob, "recording.webm");
 
-      console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
-
-      // 2. audio_url을 JSON으로 전송
       const response = await axios.post(
-        "http://127.0.0.1:8000/letters/transcribe/",
-        { audio_url: s3Url },
+        "http://127.0.0.1:8000/skyvoice/transcribe/",
+        formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -148,12 +126,12 @@ const SkyLetter02 = () => {
       formData.append("receiver_gender", gender);
       formData.append("receiver_age", age);
       formData.append("receiver_type", category);
-      formData.append("paper_color", selectedColor);
+      formData.append("color", selectedColor);
       formData.append("title", title);
       formData.append("scheduled_at", `${date}T${time}:00`);
-      formData.append("audio_file", recordedBlob);
+      formData.append("voice_file", recordedBlob); // 🔥 바로 파일로 전송
       if (transcript) {
-        formData.append("transcript", transcript);
+        formData.append("content_text", transcript);
       }
 
       const response = await axios.post(
@@ -167,9 +145,7 @@ const SkyLetter02 = () => {
         }
       );
 
-      if (response.data && response.data.transcript) {
-        setTranscript(response.data.transcript);
-      }
+      console.log("편지 생성 결과:", response.data);
 
       setShowModal(true);
     } catch (error) {
