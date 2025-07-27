@@ -24,6 +24,7 @@ const VoiceLetter = () => {
   const [transcript, setTranscript] = useState("");
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
 
   const today = useTodayDate();
   const navigate = useNavigate();
@@ -119,7 +120,8 @@ const VoiceLetter = () => {
     setIsTranscribing(true);
     try {
       // 1. S3에 업로드
-      const s3Url = await uploadToS3(recordedBlob);
+      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 이미 업로드된 URL 있으면 재사용
+      setUploadedUrl(s3Url); //한 번만 저장
 
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
 
@@ -167,10 +169,9 @@ const VoiceLetter = () => {
   }
 
   try {
-    const s3Url = await uploadToS3(recordedBlob); // 🔹 반드시 S3 업로드 먼저
-
-    const recipients = [{ email: recipient }];
-
+    const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 재사용
+    setUploadedUrl(s3Url); // 혹시 없었으면 저장
+    
     const payload = {
       receiver_list: [{ email: recipient }], 
       paper_color: selectedColor,
