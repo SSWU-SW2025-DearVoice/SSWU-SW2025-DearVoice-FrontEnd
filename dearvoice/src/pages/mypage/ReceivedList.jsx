@@ -19,37 +19,37 @@ const MAX_PAGE_BUTTONS = 5;
 const ReceivedList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
 
-    axios.get('http://localhost:8000/api/mypage/received/', {
+    axios.get(`http://localhost:8000/api/mypage/received/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => {
-      setLetters(res.data.results || res.data);
+      setLetters(res.data.results || []);
+      setTotalCount(res.data.count || 0); // 전체 개수 저장
     })
     .catch(err => console.error('받은 편지 불러오기 실패', err));
-  }, []);
+  }, [page]); // page 의존성 추가
 
   const safeLetters = Array.isArray(letters) ? letters : [];
-  const totalPages = Math.ceil(safeLetters.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE); // count 기반으로 변경
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
 
-  const pageData = Array.isArray(safeLetters)
-    ? safeLetters.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
-    : [];
+  // pageData는 백엔드가 이미 잘라서 주므로 safeLetters 그대로 사용
 
   return (
     <div className="receivedlist-wrapper">
       <h2 className="receivedlist-title">내 보관소 - 받은 편지함</h2>
       <div className="receivedlist-list">
-        {Array.isArray(pageData) && pageData.map(item => (
+        {Array.isArray(safeLetters) && safeLetters.map(item => (
           <div key={item.id} className={`received-item ${colorClass[item.paper_color]}`}>
             <span className="received-title">[ {item.transcript?.slice(0, 15)}... ]</span>
             <span className="received-user">@{item.sender?.display_id || item.sender?.email}</span>

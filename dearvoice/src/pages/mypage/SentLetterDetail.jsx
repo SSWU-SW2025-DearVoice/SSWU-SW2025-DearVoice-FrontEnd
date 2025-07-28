@@ -18,11 +18,15 @@ function SentLetterDetail() {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    .then(res => setLetter(res.data))
+    .then(res => {
+       console.log("상세 응답:", res.data); // ✅ 추가
+    setLetter(res.data);
+  })
     .catch(err => console.error("보낸 편지 상세 조회 실패", err));
   }, [id]);
 
   if (!letter) return <div>편지를 불러오는 중입니다...</div>;
+  console.log("부모에서 전달하는 letter:", letter);
 
   return (
     <div className="letterdetail-wrapper">
@@ -33,7 +37,7 @@ function SentLetterDetail() {
       >
         내 보관소 - 보낸 편지함
       </div>
-      <LetterDetailCard letter={letter} />
+      <LetterDetailCard letter={letter} isSender={true} />
     </div>
   );
 }

@@ -60,7 +60,7 @@ useEffect(() => {
       >
         내 보관소 - 받은 편지함
       </div>
-      <LetterDetailCard letter={letter} />
+      <LetterDetailCard letter={letter} isSender={false} />
     </div>
   );
 }

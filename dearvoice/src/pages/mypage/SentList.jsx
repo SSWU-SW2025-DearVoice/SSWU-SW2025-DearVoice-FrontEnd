@@ -19,40 +19,38 @@ const MAX_PAGE_BUTTONS = 5;
 const SentList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    
-    axios.get('http://localhost:8000/api/mypage/sent/', {
+    axios.get(`http://localhost:8000/api/mypage/sent/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => {
-      console.log("보낸 편지 응답:", res.data); // 추가
-      setLetters(res.data.results || res.data); 
+      setLetters(res.data.results || []);
+      setTotalCount(res.data.count || 0); // 전체 개수 저장
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
-  }, []);
+  }, [page]);
 
   const safeLetters = Array.isArray(letters) ? letters : [];
-  const totalPages = Math.ceil(letters.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
-
-  const pageData = letters.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="sentlist-wrapper">
       <h2 className="sentlist-title">내 보관소 - 보낸 편지함</h2>
       <div className="sentlist-list">
-        {Array.isArray(pageData) && pageData.map(item => (
+        {Array.isArray(safeLetters) && safeLetters.map(item => (
           <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
             <span className="sent-title">[ {item.transcript?.slice(0, 15)}... ]</span>
             <span className="sent-user">
-              @{item.recipients?.[0]?.display_id || item.recipients?.[0]?.email}
+              {item.recipients?.[0]?.display_id || item.recipients?.[0]?.email}
             </span>
             <button
               className="sent-detail"
