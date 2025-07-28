@@ -173,7 +173,7 @@ const VoiceLetter = () => {
     setUploadedUrl(s3Url); // 혹시 없었으면 저장
     
     const payload = {
-      receiver_list: [{ email: recipient }], 
+      recipients: [{ email: recipient }], 
       paper_color: selectedColor,
       scheduled_at: `${date}T${time}:00`,
       audio_url: s3Url,

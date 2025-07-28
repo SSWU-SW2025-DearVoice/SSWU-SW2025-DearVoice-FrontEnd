@@ -10,28 +10,46 @@ function ReceivedLetterDetail() {
   const navigate = useNavigate();
   const [letter, setLetter] = useState(null);
 
-  useEffect(() => {
-    axios.get(`/letters/${id}/`, {
+ useEffect(() => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  axios.get(`http://localhost:8000/letters/${id}/`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
-    .then(res => {
-      setLetter(res.data);
-      return axios.patch(`/api/mypage/letter/${id}/read/`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+    .then((res) => {
+      console.log("받은 편지 응답 ✅", res.data);
+      setLetter(res.data); // 상태만 업데이트
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("받은 편지 상세 조회 실패", err);
     });
-  }, [id]);
+}, [id]);
 
-  if (!letter) return <div>편지를 불러오는 중입니다...</div>;
+// 🔽 읽음 처리 패치 요청은 letter가 로드된 이후 별도 useEffect에서
+useEffect(() => {
+  if (!letter) return;
 
-  const audioProps = useAudioPlayer(letter.audio_url);
+  const accessToken = localStorage.getItem("accessToken");
+
+  axios
+    .patch(`http://localhost:8000/api/mypage/letter/${id}/read/`, {}, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((res) => {
+      console.log("읽음 처리 완료 ✅", res.data);
+    })
+    .catch((err) => {
+      console.error("읽음 처리 실패 ❌", err);
+    });
+}, [letter, id]);
+
+  if (!letter) {
+  return <div>편지 또는 오디오 정보를 불러오는 중입니다...</div>;
+}
 
   return (
     <div className="letterdetail-wrapper">
@@ -42,7 +60,7 @@ function ReceivedLetterDetail() {
       >
         내 보관소 - 받은 편지함
       </div>
-      <LetterDetailCard letter={letter} {...audioProps} />
+      <LetterDetailCard letter={letter} />
     </div>
   );
 }

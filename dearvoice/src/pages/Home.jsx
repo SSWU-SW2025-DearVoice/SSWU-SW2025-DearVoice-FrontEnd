@@ -15,7 +15,7 @@ const Home = () => {
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:8000/users/me/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/auth/me/", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

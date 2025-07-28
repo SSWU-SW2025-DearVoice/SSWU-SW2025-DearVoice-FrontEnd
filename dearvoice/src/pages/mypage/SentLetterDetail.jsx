@@ -12,9 +12,10 @@ function SentLetterDetail() {
   const [letter, setLetter] = useState(null);
 
   useEffect(() => {
-    axios.get(`/letters/${id}/`, {
+    const accessToken = localStorage.getItem("accessToken");
+    axios.get(`http://localhost:8000/letters/${id}/`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => setLetter(res.data))
@@ -22,8 +23,6 @@ function SentLetterDetail() {
   }, [id]);
 
   if (!letter) return <div>편지를 불러오는 중입니다...</div>;
-
-  const audioProps = useAudioPlayer(letter.audio_url);
 
   return (
     <div className="letterdetail-wrapper">
@@ -34,7 +33,7 @@ function SentLetterDetail() {
       >
         내 보관소 - 보낸 편지함
       </div>
-      <LetterDetailCard letter={letter} isSender {...audioProps} />
+      <LetterDetailCard letter={letter} />
     </div>
   );
 }

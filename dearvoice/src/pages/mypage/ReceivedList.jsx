@@ -22,9 +22,11 @@ const ReceivedList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/mypage/received/', {
+    const accessToken = localStorage.getItem("accessToken");
+
+    axios.get('http://localhost:8000/api/mypage/received/', {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => {

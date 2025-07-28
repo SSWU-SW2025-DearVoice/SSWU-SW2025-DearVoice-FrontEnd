@@ -22,12 +22,15 @@ const SentList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/mypage/sent/', {
+    const accessToken = localStorage.getItem("accessToken");
+    
+    axios.get('http://localhost:8000/api/mypage/sent/', {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => {
+      console.log("보낸 편지 응답:", res.data); // 추가
       setLetters(res.data.results || res.data); 
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
