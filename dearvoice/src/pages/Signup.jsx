@@ -29,70 +29,10 @@ const Signup = () => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // 중복 확인 메시지는 입력 변경 시 초기화하는게 좋음
+    if (e.target.name === "email") setEmailCheck({ status: "", message: "" });
+    if (e.target.name === "user_id") setIdCheck({ status: "", message: "" });
   };
-
-  // 이메일 자동 중복확인 (임시)
-  useEffect(() => {
-    if (form.email) {
-      const timer = setTimeout(() => {
-        try {
-          // 임시로 이메일 형식만 체크
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (emailRegex.test(form.email)) {
-            setEmailCheck({
-              status: "success",
-              message: "사용 가능한 이메일입니다.",
-            });
-          } else {
-            setEmailCheck({
-              status: "error",
-              message: "올바른 이메일 형식이 아닙니다.",
-            });
-          }
-        } catch (err) {
-          setEmailCheck({
-            status: "error",
-            message: "이메일 확인 중 오류가 발생했습니다.",
-          });
-        }
-      }, 1000); // 1초 후 자동 확인
-
-      return () => clearTimeout(timer);
-    } else {
-      setEmailCheck({ status: "", message: "" });
-    }
-  }, [form.email]);
-
-  // 아이디 자동 중복확인 (임시) 아이디는 형식이나 길이 체크 필요 없을 듯 중복확인만
-  useEffect(() => {
-    if (form.user_id) {
-      const timer = setTimeout(() => {
-        try {
-          // 임시로 길이만 체크 (4자 이상)
-          if (form.user_id.length >= 4) {
-            setIdCheck({
-              status: "success",
-              message: "사용 가능한 아이디입니다.",
-            });
-          } else {
-            setIdCheck({
-              status: "error",
-              message: "아이디는 4자 이상이어야 합니다.",
-            });
-          }
-        } catch (err) {
-          setIdCheck({
-            status: "error",
-            message: "아이디 확인 중 오류가 발생했습니다.",
-          });
-        }
-      }, 1000); // 1초 후 자동 확인
-
-      return () => clearTimeout(timer);
-    } else {
-      setIdCheck({ status: "", message: "" });
-    }
-  }, [form.user_id]);
 
   // 비밀번호 길이 검증
   useEffect(() => {
@@ -147,6 +87,72 @@ const Signup = () => {
     }
   }, [form.password, form.passwordConfirm]);
 
+  // 아이디 중복 확인 함수 (버튼 클릭용)
+  const checkUserIdDuplicate = async () => {
+    if (!form.user_id) {
+      setIdCheck({ status: "error", message: "아이디를 입력하세요." });
+      return;
+    }
+    try {
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/auth/check/user-id/",
+        { params: { user_id: form.user_id } }
+      );
+      if (res.data.available) {
+        setIdCheck({ status: "success", message: "사용 가능한 아이디입니다." });
+      } else {
+        setIdCheck({
+          status: "error",
+          message: "이미 사용 중인 아이디입니다.",
+        });
+      }
+    } catch (err) {
+      setIdCheck({
+        status: "error",
+        message: "아이디 확인 중 오류가 발생했습니다.",
+      });
+    }
+  };
+
+  // 이메일 중복 확인 함수 (버튼 클릭용)
+  const checkEmailDuplicate = async () => {
+    if (!form.email) {
+      setEmailCheck({ status: "error", message: "이메일을 입력하세요." });
+      return;
+    }
+    // 이메일 형식 간단 체크
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setEmailCheck({
+        status: "error",
+        message: "올바른 이메일 형식이 아닙니다.",
+      });
+      return;
+    }
+    try {
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/auth/check/email/",
+        { params: { email: form.email } }
+      );
+      if (res.data.available) {
+        setEmailCheck({
+          status: "success",
+          message: "사용 가능한 이메일입니다.",
+        });
+      } else {
+        setEmailCheck({
+          status: "error",
+          message: "이미 사용 중인 이메일입니다.",
+        });
+      }
+    } catch (err) {
+      setEmailCheck({
+        status: "error",
+        message: "이메일 확인 중 오류가 발생했습니다.",
+      });
+    }
+  };
+
   // 모든 검증이 성공했는지 확인하는 계산된 값
   const isFormValid =
     emailCheck.status === "success" &&
@@ -169,7 +175,7 @@ const Signup = () => {
       const { passwordConfirm, ...signupData } = form;
 
       await axios.post("http://127.0.0.1:8000/api/auth/signup/", signupData, {
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
       setShowModal(true);
     } catch (err) {
@@ -208,6 +214,13 @@ const Signup = () => {
                 value={form.email}
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                onClick={checkEmailDuplicate}
+                className="check-btn"
+              >
+                중복 확인
+              </button>
               {emailCheck.message && (
                 <div className={`check-message ${emailCheck.status}`}>
                   {emailCheck.message}
@@ -225,6 +238,13 @@ const Signup = () => {
                 value={form.user_id}
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                onClick={checkUserIdDuplicate}
+                className="check-btn"
+              >
+                중복 확인
+              </button>
               {idCheck.message && (
                 <div className={`check-message ${idCheck.status}`}>
                   {idCheck.message}
