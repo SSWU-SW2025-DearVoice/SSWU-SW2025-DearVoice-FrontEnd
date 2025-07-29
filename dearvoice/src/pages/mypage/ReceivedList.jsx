@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../../styles/ReceivedList.css";
 import arrow from "../../assets/images/arrow.png";
 import arrowstart from "../../assets/images/arrow-start.png";
+import axios from 'axios';
 
 const colorClass = {
   green: "sent-item-green",
