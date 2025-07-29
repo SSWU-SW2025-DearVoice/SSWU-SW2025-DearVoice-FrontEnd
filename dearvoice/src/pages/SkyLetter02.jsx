@@ -64,10 +64,6 @@ const SkyLetter02 = () => {
 
   const isFormComplete = title && date && time && isRecorded;
 
-  // const handleReplyClick = () => {
-  //   navigate("../mypage/detail/received/1");
-  // };
-
   const handleReplyClick = () => {
     if (letterId) {
       navigate(`/mypage/detail/received/${letterId}`);
@@ -109,9 +105,8 @@ const SkyLetter02 = () => {
     try {
       // 1. S3에 업로드
       const s3Url = await uploadToS3(recordedBlob);
-
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
-
+      
       // 2. audio_url을 JSON으로 전송
       const response = await axios.post(
         "http://127.0.0.1:8000/letters/transcribe/",
@@ -178,7 +173,7 @@ const SkyLetter02 = () => {
           },
         }
       );
-
+      
       // if (response.data && response.data.transcript) {
       //   setTranscript(response.data.transcript);
       // }
