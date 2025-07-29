@@ -60,7 +60,20 @@ useEffect(() => {
       >
         내 보관소 - 받은 편지함
       </div>
+
       <LetterDetailCard letter={letter} isSender={false} />
+        {letter.skyvoice_reply && (
+        <div className="reply-section">
+          <h3>📬 답장 내용</h3>
+          <p>{letter.skyvoice_reply.reply_text}</p>
+          {letter.skyvoice_reply.reply_voice_file && (
+            <audio
+              controls
+              src={letter.skyvoice_reply.reply_voice_file}
+            ></audio>
+          )}
+        </div>
+      )}
     </div>
   );
 }

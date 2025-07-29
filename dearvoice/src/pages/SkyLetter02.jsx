@@ -35,6 +35,7 @@ const SkyLetter02 = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [blinkImage, setBlinkImage] = useState(sending01);
+  const [letterId, setLetterId] = useState(null);
 
   const { isRecording, isRecorded, handleRecordClick, recordedBlob } =
     useAudioRecorder();
@@ -64,7 +65,31 @@ const SkyLetter02 = () => {
   const isFormComplete = title && date && time && isRecorded;
 
   const handleReplyClick = () => {
-    navigate("../mypage/detail/received/1");
+    if (letterId) {
+      navigate(`/mypage/detail/received/${letterId}`);
+    } else {
+      alert("답장 페이지로 이동할 편지 ID가 없습니다.");
+    }
+  };
+
+  const uploadToS3 = async (fileBlob) => {
+    const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
+
+    const formData = new FormData();
+    formData.append("file", fileBlob, "recording.webm");
+
+    const response = await axios.post(
+      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data.url;
   };
 
   const transcribeAudio = async () => {
@@ -78,17 +103,18 @@ const SkyLetter02 = () => {
 
     setIsTranscribing(true);
     try {
-      // 🔥 S3 업로드 없이 바로 파일 전송
-      const formData = new FormData();
-      formData.append("audio_file", recordedBlob, "recording.webm");
-
+      // 1. S3에 업로드
+      const s3Url = await uploadToS3(recordedBlob);
+      console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
+      
+      // 2. audio_url을 JSON으로 전송
       const response = await axios.post(
-        "http://127.0.0.1:8000/skyvoice/transcribe/",
-        formData,
+        "http://127.0.0.1:8000/letters/transcribe/",
+        { audio_url: s3Url },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -126,10 +152,13 @@ const SkyLetter02 = () => {
       formData.append("receiver_gender", gender);
       formData.append("receiver_age", age);
       formData.append("receiver_type", category);
-      formData.append("color", selectedColor);
+      formData.append("paper_color", selectedColor);
       formData.append("title", title);
       formData.append("scheduled_at", `${date}T${time}:00`);
-      formData.append("voice_file", recordedBlob); // 🔥 바로 파일로 전송
+      formData.append("audio_file", recordedBlob);
+      // if (transcript) {
+      //   formData.append("transcript", transcript);
+      // }
       if (transcript) {
         formData.append("content_text", transcript);
       }
@@ -144,8 +173,14 @@ const SkyLetter02 = () => {
           },
         }
       );
+      
+      // if (response.data && response.data.transcript) {
+      //   setTranscript(response.data.transcript);
+      // }
 
-      console.log("편지 생성 결과:", response.data);
+      if (response.data && response.data.id) {
+        setLetterId(response.data.id);
+      }
 
       setShowModal(true);
     } catch (error) {

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../styles/ReceivedList.css';
-import axios from 'axios';
-import arrow from '../../assets/images/arrow.png';
-import arrowstart from '../../assets/images/arrow-start.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../styles/ReceivedList.css";
+import arrow from "../../assets/images/arrow.png";
+import arrowstart from "../../assets/images/arrow-start.png";
 
 const colorClass = {
   green: "sent-item-green",
@@ -21,7 +20,7 @@ const ReceivedList = () => {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
 
@@ -42,7 +41,7 @@ const ReceivedList = () => {
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
-
+  
   // pageData는 백엔드가 이미 잘라서 주므로 safeLetters 그대로 사용
 
   return (
@@ -57,7 +56,7 @@ const ReceivedList = () => {
               className="received-detail"
               onClick={() => navigate(`/mypage/detail/received/${item.id}`)}
             >
-              <img src={arrow} className='arrow' alt="arrow" />
+              <img src={arrow} className="arrow" alt="arrow" />
             </button>
           </div>
         ))}
@@ -74,10 +73,12 @@ const ReceivedList = () => {
               key={pageNum}
               className={`pagination-num ${page === pageNum ? "active" : ""}`}
               onClick={() => setPage(pageNum)}
-            >{pageNum}</button>
+            >
+              {pageNum}
+            </button>
           );
         })}
-
+        
         <button className='pagination-arrow' disabled={page === totalPages} onClick={() => setPage(page + 1)}>
           <img src={arrow} className='arrow-end' alt="next"/>
         </button>
