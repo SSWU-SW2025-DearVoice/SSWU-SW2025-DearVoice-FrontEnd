@@ -92,7 +92,7 @@ const VoiceLetter = () => {
     const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
 
     const formData = new FormData();
-    formData.append("file", fileBlob, "recording.webm");
+    formData.append("file", fileBlob, "recording.wev");
 
     const response = await axios.post(
       "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
@@ -178,6 +178,7 @@ const VoiceLetter = () => {
       scheduled_at: `${date}T${time}:00`,
       audio_url: s3Url,
       transcript: transcript,
+      title: title,
     };
 
     const response = await axios.post(
@@ -229,6 +230,16 @@ const VoiceLetter = () => {
               required
             />
           </span>
+        </div>
+
+        <div className="letterdetail-row">
+          <span className="letterdetail-label">제목ㅣ</span>
+          <input
+            type="text"
+            placeholder={`${today} 음성 편지`}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div className="letterdetail-row">

@@ -31,7 +31,7 @@ const LetterDetailCard = ({ letter, isSender = false }) => {
       <div className="letterdetail-row">
         <span className="letterdetail-label">제목ㅣ</span>
         <span className="letterdetail-value">
-          {letter.transcript?.slice(0, 15) || "제목 없음"}...
+          {letter.title?.slice(0, 15) || "제목 없음"}
         </span>
       </div>
       <div className="letterdetail-row">

@@ -51,7 +51,7 @@ const ReceivedList = () => {
       <div className="receivedlist-list">
         {Array.isArray(safeLetters) && safeLetters.map(item => (
           <div key={item.id} className={`received-item ${colorClass[item.paper_color]}`}>
-            <span className="received-title">[ {item.transcript?.slice(0, 15)}... ]</span>
+            <span className="received-title">[ {item.title?.slice(0, 15) || "제목 없음"} ]</span>
             <span className="received-user">@{item.sender?.display_id || item.sender?.email}</span>
             <button
               className="received-detail"
