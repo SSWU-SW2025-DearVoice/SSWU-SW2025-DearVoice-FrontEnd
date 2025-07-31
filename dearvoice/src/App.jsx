@@ -52,10 +52,8 @@ function App() {
             <Route path="sent" element={<SentList />} />
             <Route path="received" element={<ReceivedList />} />
             <Route path="detail/sent/:id" element={<SentLetterDetail />} />
-            <Route
-              path="detail/received/:id"
-              element={<ReceivedLetterDetail />}
-            />
+            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
+            <Route path="detail/sky/:id" element={<ReceivedLetterDetail />} />
           </Route>
         </Route>
 

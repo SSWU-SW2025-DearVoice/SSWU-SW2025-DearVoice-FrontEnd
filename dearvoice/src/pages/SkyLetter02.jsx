@@ -164,7 +164,7 @@ const SkyLetter02 = () => {
       }
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/skyvoice/create/",
+        "http://127.0.0.1:8000/skyvoice/letters/",
         formData,
         {
           headers: {
