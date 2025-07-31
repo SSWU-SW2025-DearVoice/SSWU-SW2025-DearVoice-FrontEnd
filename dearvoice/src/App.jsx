@@ -24,6 +24,7 @@ import SentList from "./pages/mypage/SentList";
 import ReceivedList from "./pages/mypage/ReceivedList";
 import SentLetterDetail from "./pages/mypage/SentLetterDetail";
 import ReceivedLetterDetail from "./pages/mypage/ReceivedLetterDetail";
+import SkyVoiceLetterDetail from "./pages/mypage/SkyVoiceLetterDetail";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -52,10 +53,9 @@ function App() {
             <Route path="sent" element={<SentList />} />
             <Route path="received" element={<ReceivedList />} />
             <Route path="detail/sent/:id" element={<SentLetterDetail />} />
-            <Route
-              path="detail/received/:id"
-              element={<ReceivedLetterDetail />}
-            />
+            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
+            {/* 스카이레터 답장 상세 라우터 추가 */}
+            <Route path="detail/skyvoice/:id" element={<SkyVoiceLetterDetail />} />
           </Route>
         </Route>
 

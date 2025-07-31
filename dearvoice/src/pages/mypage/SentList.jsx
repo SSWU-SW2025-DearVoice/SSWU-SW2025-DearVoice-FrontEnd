@@ -48,7 +48,7 @@ const SentList = () => {
       <div className="sentlist-list">
         {Array.isArray(safeLetters) && safeLetters.map(item => (
           <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
-            <span className="sent-title">[ {item.transcript?.slice(0, 15)}... ]</span>
+            <span className="sent-title">[ {item.title?.slice(0, 15) || "제목 없음"} ]</span>
             <span className="sent-user">
               {item.recipients?.[0]?.display_id || item.recipients?.[0]?.email}
             </span>
