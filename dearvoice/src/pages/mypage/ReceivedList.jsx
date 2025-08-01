@@ -52,7 +52,20 @@ const ReceivedList = () => {
         ) : (
           safeLetters.map(item => (
             <div key={item.id} className={`received-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
-              <span className="received-title">[ {item.transcript?.slice(0, 15)}... ]</span>
+              <span className="received-title">
+                [ {item.type === "sky"
+                    ? (
+                        item.reply_text && item.reply_text.trim() !== ""
+                          ? item.reply_text.replace(/^"(.*)"$/, '$1').slice(0, 15)
+                          : "AI 답장 없음"
+                      )
+                    : (
+                        item.title && item.title.trim() !== ""
+                          ? item.title.slice(0, 15)
+                          : "제목 없음"
+                      )
+                  } ]
+              </span>
               <span className="received-user">
                 {item.type === "sky" ? "[하늘편지]" : "[일반편지]"} @
                 {item.sender_display_id || "익명"}
@@ -62,7 +75,7 @@ const ReceivedList = () => {
                 onClick={() =>
                   navigate(
                     item.type === "sky"
-                      ? `/mypage/detail/sky/${item.id}`
+                      ? `/mypage/detail/received/sky/${item.id}`
                       : `/mypage/detail/received/${item.id}`
                   )
                 }

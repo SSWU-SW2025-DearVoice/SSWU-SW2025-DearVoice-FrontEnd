@@ -36,6 +36,8 @@ const SkyLetter02 = () => {
   const [showModal, setShowModal] = useState(false);
   const [blinkImage, setBlinkImage] = useState(sending01);
   const [letterId, setLetterId] = useState(null);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+  const [response, setResponse] = useState(null);
 
   const { isRecording, isRecorded, handleRecordClick, recordedBlob } =
     useAudioRecorder();
@@ -66,7 +68,7 @@ const SkyLetter02 = () => {
 
   const handleReplyClick = () => {
     if (letterId) {
-      navigate(`/mypage/detail/received/${letterId}`);
+      navigate(`/mypage/detail/received/sky/${letterId}`);
     } else {
       alert("답장 페이지로 이동할 편지 ID가 없습니다.");
     }
@@ -104,7 +106,8 @@ const SkyLetter02 = () => {
     setIsTranscribing(true);
     try {
       // 1. S3에 업로드
-      const s3Url = await uploadToS3(recordedBlob);
+      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 이미 업로드된 URL 있으면 재사용
+      setUploadedUrl(s3Url); //한 번만 저장
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
       
       // 2. audio_url을 JSON으로 전송
@@ -147,29 +150,29 @@ const SkyLetter02 = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("receiver_name", name);
-      formData.append("receiver_gender", gender);
-      formData.append("receiver_age", age);
-      formData.append("receiver_type", category);
-      formData.append("paper_color", selectedColor);
-      formData.append("title", title);
-      formData.append("scheduled_at", `${date}T${time}:00`);
-      formData.append("audio_file", recordedBlob);
-      // if (transcript) {
-      //   formData.append("transcript", transcript);
-      // }
-      if (transcript) {
-        formData.append("content_text", transcript);
-      }
+      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 재사용
+      setUploadedUrl(s3Url); // 혹시 없었으면 저장
+
+      const payload = {
+        receiver_name: name,
+        receiver_gender: gender,
+        receiver_age: age,
+        receiver_type: category,
+        color: selectedColor,
+        title,
+        scheduled_at: `${date}T${time}:00`,
+        audio_url: s3Url,        // S3 업로드 후 받은 URL
+        content_text: transcript,       // 텍스트 변환 결과
+        // 기타 필요한 필드
+      };
 
       const response = await axios.post(
         "http://127.0.0.1:8000/skyvoice/letters/",
-        formData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -182,6 +185,7 @@ const SkyLetter02 = () => {
         setLetterId(response.data.id);
       }
 
+      setResponse(response.data); // AI의 답장 내용 저장
       setShowModal(true);
     } catch (error) {
       if (error.response?.status === 401) {

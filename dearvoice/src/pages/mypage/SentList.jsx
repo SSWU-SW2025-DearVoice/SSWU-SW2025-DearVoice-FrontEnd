@@ -51,7 +51,7 @@ const SentList = () => {
         ) : (
           safeLetters.map(item => (
             <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
-              <span className="sent-title">[ {item.transcript?.slice(0, 15)}... ]</span>
+              <span className="sent-title">[ {item.title?.slice(0, 15)} ]</span>
               <span className="sent-user">
                 {item.type === "sky"
                   ? "하늘편지"
@@ -62,7 +62,7 @@ const SentList = () => {
                 onClick={() =>
                   navigate(
                     item.type === "sky"
-                      ? `/mypage/detail/sky/${item.id}`
+                      ? `/mypage/detail/sent/sky/${item.id}`
                       : `/mypage/detail/sent/${item.id}`
                   )
                 }
