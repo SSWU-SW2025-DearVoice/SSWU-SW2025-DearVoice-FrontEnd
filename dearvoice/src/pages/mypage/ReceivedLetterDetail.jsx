@@ -1,55 +1,77 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../../styles/LetterDetail.css";
 import LetterDetailCard from "../../components/LetterDetailCard";
-import useAudioPlayer from "../../hooks/useLetterAudio";
 import axios from "axios";
 
 function ReceivedLetterDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [letter, setLetter] = useState(null);
+  const [isReplyLoading, setIsReplyLoading] = useState(false);
+  const pollingRef = useRef(null);
 
- useEffect(() => {
-  const accessToken = localStorage.getItem("accessToken");
+  const isSkyLetter = location.pathname.includes("/sky/");
 
-  axios.get(`http://localhost:8000/letters/${id}/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((res) => {
-      console.log("받은 편지 응답 ✅", res.data);
-      setLetter(res.data); // 상태만 업데이트
-    })
-    .catch((err) => {
-      console.error("받은 편지 상세 조회 실패", err);
-    });
-}, [id]);
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const url = isSkyLetter
+      ? `http://localhost:8000/skyvoice/letters/${id}/`
+      : `http://localhost:8000/letters/${id}/`;
 
-// 🔽 읽음 처리 패치 요청은 letter가 로드된 이후 별도 useEffect에서
-useEffect(() => {
-  if (!letter) return;
+    const fetchLetter = async () => {
+      try {
+        const res = await axios.get(url, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        setLetter(res.data);
 
-  const accessToken = localStorage.getItem("accessToken");
+        // 하늘편지이고 답장이 없으면 폴링 시작
+        if (isSkyLetter && !res.data.reply_text && !pollingRef.current) {
+          setIsReplyLoading(true);
+          pollingRef.current = setInterval(fetchLetter, 2000);
+        }
+        // 답장이 오면 폴링 종료
+        if (isSkyLetter && res.data.reply_text && pollingRef.current) {
+          setIsReplyLoading(false);
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+      } catch (err) {
+        console.error("상세 조회 실패", err);
+      }
+    };
 
-  axios
-    .patch(`http://localhost:8000/api/mypage/letter/${id}/read/`, {}, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((res) => {
-      console.log("읽음 처리 완료 ✅", res.data);
-    })
-    .catch((err) => {
-      console.error("읽음 처리 실패 ❌", err);
-    });
-}, [letter, id]);
+    fetchLetter();
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [id, isSkyLetter]);
+
+  // 일반 편지만 읽음 처리
+  useEffect(() => {
+    if (!letter || isSkyLetter) return;
+
+    const accessToken = localStorage.getItem("accessToken");
+
+    axios
+      .patch(`http://localhost:8000/api/mypage/letter/${id}/read/`, {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        console.log("읽음 처리 완료", res.data);
+      })
+      .catch((err) => {
+        console.error("읽음 처리 실패", err);
+      });
+  }, [letter, id, isSkyLetter]);
 
   if (!letter) {
-  return <div>편지 또는 오디오 정보를 불러오는 중입니다...</div>;
-}
+    return <div>편지를 불러오는 중입니다...</div>;
+  }
 
   return (
     <div className="letterdetail-wrapper">
@@ -61,7 +83,12 @@ useEffect(() => {
         내 보관소 - 받은 편지함
       </div>
 
-      <LetterDetailCard letter={letter} isSender={false} />
+      <LetterDetailCard
+        letter={letter}
+        isSender={false}
+        isSky={isSkyLetter}
+        isReplyLoading={isReplyLoading}
+      />
     </div>
   );
 }

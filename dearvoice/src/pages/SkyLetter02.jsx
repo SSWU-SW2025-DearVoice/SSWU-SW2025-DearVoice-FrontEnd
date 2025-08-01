@@ -68,7 +68,7 @@ const SkyLetter02 = () => {
 
   const handleReplyClick = () => {
     if (letterId) {
-      navigate(`/mypage/detail/skyvoice/${letterId}/`);
+      navigate(`/mypage/detail/received/sky/${letterId}`);
     } else {
       alert("답장 페이지로 이동할 편지 ID가 없습니다.");
     }

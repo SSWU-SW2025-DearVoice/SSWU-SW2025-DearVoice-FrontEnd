@@ -31,7 +31,7 @@ const SentList = () => {
     })
     .then(res => {
       setLetters(res.data.results || []);
-      setTotalCount(res.data.count || 0); // 전체 개수 저장
+      setTotalCount(res.data.count || 0);
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
   }, [page]);
@@ -46,25 +46,41 @@ const SentList = () => {
     <div className="sentlist-wrapper">
       <h2 className="sentlist-title">내 보관소 - 보낸 편지함</h2>
       <div className="sentlist-list">
-        {Array.isArray(safeLetters) && safeLetters.map(item => (
-          <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
-            <span className="sent-title">[ {item.title?.slice(0, 15) || "제목 없음"} ]</span>
-            <span className="sent-user">
-              {item.recipients?.[0]?.display_id || item.recipients?.[0]?.email}
-            </span>
-            <button
-              className="sent-detail"
-              onClick={() => navigate(`/mypage/detail/sent/${item.id}`)}
-            >
-              <img src={arrow} className='arrow' alt="arrow" />
-            </button>
-          </div>
-        ))}
-
+        {safeLetters.length === 0 ? (
+          <p className="no-letters">보낸 편지가 없습니다.</p>
+        ) : (
+          safeLetters.map(item => (
+            <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
+              <span className="sent-title">[ {item.title?.slice(0, 15)} ]</span>
+              <span className="sent-user">
+                {item.type === "sky"
+                  ? "하늘편지"
+                  : `일반편지 → @${item.recipients?.[0]?.display_id || item.recipients?.[0]?.email || "수신자 없음"}`}
+              </span>
+              <button
+                className="sent-detail"
+                onClick={() =>
+                  navigate(
+                    item.type === "sky"
+                      ? `/mypage/detail/sent/sky/${item.id}`
+                      : `/mypage/detail/sent/${item.id}`
+                  )
+                }
+              >
+                <img src={arrow} className='arrow' alt="arrow" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
+
       <div className="sentlist-pagination">
-        <button className='pagination-arrow' disabled={page === 1} onClick={() => setPage(page - 1)}>
-          <img src={arrowstart} className='arrow-start' alt="prev"/>
+        <button
+          className='pagination-arrow'
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          <img src={arrowstart} className='arrow-start' alt="prev" />
         </button>
 
         {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => {
@@ -74,12 +90,18 @@ const SentList = () => {
               key={pageNum}
               className={`pagination-num ${page === pageNum ? "active" : ""}`}
               onClick={() => setPage(pageNum)}
-            >{pageNum}</button>
+            >
+              {pageNum}
+            </button>
           );
         })}
 
-        <button className='pagination-arrow' disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-          <img src={arrow} className='arrow-end' alt="next"/>
+        <button
+          className='pagination-arrow'
+          disabled={page === totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          <img src={arrow} className='arrow-end' alt="next" />
         </button>
       </div>
     </div>

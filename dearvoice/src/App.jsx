@@ -54,8 +54,8 @@ function App() {
             <Route path="received" element={<ReceivedList />} />
             <Route path="detail/sent/:id" element={<SentLetterDetail />} />
             <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
-            {/* 스카이레터 답장 상세 라우터 추가 */}
-            <Route path="detail/skyvoice/:id" element={<SkyVoiceLetterDetail />} />
+            <Route path="detail/received/sky/:id" element={<ReceivedLetterDetail />} />
+            <Route path="detail/sent/sky/:id" element={<SentLetterDetail />} />
           </Route>
         </Route>
 
