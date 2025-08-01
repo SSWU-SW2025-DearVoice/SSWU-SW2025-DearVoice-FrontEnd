@@ -92,7 +92,7 @@ const VoiceLetter = () => {
     const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
 
     const formData = new FormData();
-    formData.append("file", fileBlob, "recording.webm");
+    formData.append("file", fileBlob, "recording.wev");
 
     const response = await axios.post(
       "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트

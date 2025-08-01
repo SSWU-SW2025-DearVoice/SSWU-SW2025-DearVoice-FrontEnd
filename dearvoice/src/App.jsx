@@ -24,6 +24,7 @@ import SentList from "./pages/mypage/SentList";
 import ReceivedList from "./pages/mypage/ReceivedList";
 import SentLetterDetail from "./pages/mypage/SentLetterDetail";
 import ReceivedLetterDetail from "./pages/mypage/ReceivedLetterDetail";
+import SkyVoiceLetterDetail from "./pages/mypage/SkyVoiceLetterDetail";
 import NotFound from "./pages/NotFound";
 
 function App() {
