@@ -98,8 +98,8 @@ const LetterDetailCard = ({
         />
       </div>
 
-      {/* 답장: 하늘편지 보낸 편지함에서는 답장 미표시, 그 외에는 표시 */}
-      {(!isSky || (isSky && !isSender)) && (
+      {/* 답장: 하늘편지 + 받은편지함 */}
+      {isSky && !isSender && (
         <div
           className="letterdetail-reply"
           style={{
@@ -135,9 +135,7 @@ const LetterDetailCard = ({
           >
             {isSky && isReplyLoading
               ? "AI 답장을 생성 중입니다..."
-              : (isSky && !reply)
-                ? "아직 답장이 도착하지 않았습니다."
-                : reply}
+              : reply}
           </div>
           {replyAudio && (
             <audio controls src={replyAudio} style={{ width: "100%", maxWidth: 400, margin: "0 auto" }} />
