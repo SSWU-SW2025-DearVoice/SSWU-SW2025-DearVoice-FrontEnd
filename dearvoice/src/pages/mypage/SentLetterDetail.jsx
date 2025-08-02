@@ -17,7 +17,7 @@ function SentLetterDetail() {
 
     const url = isSkyLetter
       ? `http://localhost:8000/skyvoice/letters/${id}/`
-      : `http://localhost:8000/letters/${id}/`;
+      : `http://localhost:8000/api/letters/${id}/`;
 
     axios
       .get(url, {

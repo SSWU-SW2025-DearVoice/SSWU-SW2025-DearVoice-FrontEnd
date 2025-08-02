@@ -95,7 +95,7 @@ const VoiceLetter = () => {
     formData.append("file", fileBlob, "recording.wev");
 
     const response = await axios.post(
-      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      "http://localhost:8000/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
       formData,
       {
         headers: {
@@ -127,7 +127,7 @@ const VoiceLetter = () => {
 
       // 2. audio_url을 JSON으로 전송
       const response = await axios.post(
-        "http://127.0.0.1:8000/letters/transcribe/",
+        "http://127.0.0.1:8000/api/letters/transcribe/",
         { audio_url: s3Url },
         {
           headers: {
@@ -182,7 +182,7 @@ const VoiceLetter = () => {
     };
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/letters/create/",
+      "http://127.0.0.1:8000/api/letters/create/",
       payload,
       {
         headers: {

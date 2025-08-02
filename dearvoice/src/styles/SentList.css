@@ -119,6 +119,28 @@
   height: 24px;
 }
 
+/* 💡 보낸편지삭제 */
+.sent-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.sent-delete {
+  background: transparent;
+  border: none;
+  color: #d62828;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.1s ease;
+}
+
+.sent-delete:hover {
+  transform: scale(1.15);
+}
+
 .pagination-arrow:disabled .arrow-start,
 .pagination-arrow:disabled .arrow-end {
   opacity: 0.4;

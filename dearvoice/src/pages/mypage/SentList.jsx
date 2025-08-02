@@ -35,6 +35,27 @@ const SentList = () => {
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
   }, [page]);
+  
+  /* 편지 삭제 */
+  const handleDelete = async (letterId, letterType) => {
+    const confirmed = window.confirm("정말 이 편지를 삭제하시겠습니까?");
+    if (!confirmed) return;
+
+    const token = localStorage.getItem("accessToken");
+    try {
+      await axios.delete(`http://localhost:8000/api/mypage/sent/delete/${letterType}/${letterId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      alert("삭제가 완료되었습니다.");
+      setLetters(prev => prev.filter(item => item.id !== letterId));
+    } catch (err) {
+      console.error("편지 삭제 실패", err);
+      alert("삭제에 실패했습니다.");
+    }
+  };
 
   const safeLetters = Array.isArray(letters) ? letters : [];
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -57,18 +78,29 @@ const SentList = () => {
                   ? "하늘편지"
                   : `일반편지 → @${item.recipients?.[0]?.display_id || item.recipients?.[0]?.email || "수신자 없음"}`}
               </span>
-              <button
-                className="sent-detail"
-                onClick={() =>
-                  navigate(
-                    item.type === "sky"
-                      ? `/mypage/detail/sent/sky/${item.id}`
-                      : `/mypage/detail/sent/${item.id}`
-                  )
-                }
-              >
-                <img src={arrow} className='arrow' alt="arrow" />
-              </button>
+              
+              {/* 편지 삭제 */}
+              <div className="sent-actions">
+                <button
+                  className="sent-detail"
+                  onClick={() =>
+                    navigate(
+                      item.type === "sky"
+                        ? `/mypage/detail/sent/sky/${item.id}`
+                        : `/mypage/detail/sent/${item.id}`
+                    )
+                  }
+                >
+                  <img src={arrow} className='arrow' alt="arrow" />
+                </button>
+
+                <button
+                  className="sent-delete"
+                  onClick={() => handleDelete(item.id, item.type)}
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
           ))
         )}

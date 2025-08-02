@@ -81,7 +81,7 @@ const SkyLetter02 = () => {
     formData.append("file", fileBlob, "recording.wev");
 
     const response = await axios.post(
-      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      "http://localhost:8000/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
       formData,
       {
         headers: {

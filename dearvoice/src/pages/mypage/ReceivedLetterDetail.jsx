@@ -18,7 +18,7 @@ function ReceivedLetterDetail() {
     const accessToken = localStorage.getItem("accessToken");
     const url = isSkyLetter
       ? `http://localhost:8000/skyvoice/letters/${id}/`
-      : `http://localhost:8000/letters/${id}/`;
+      : `http://localhost:8000/api/letters/${id}/`;
 
     const fetchLetter = async () => {
       try {

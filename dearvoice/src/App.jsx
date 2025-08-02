@@ -26,6 +26,7 @@ import SentLetterDetail from "./pages/mypage/SentLetterDetail";
 import ReceivedLetterDetail from "./pages/mypage/ReceivedLetterDetail";
 import SkyVoiceLetterDetail from "./pages/mypage/SkyVoiceLetterDetail";
 import NotFound from "./pages/NotFound";
+import PublicLetterDetail from "./pages/PublicLetterDetail"; 
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/share/:uuid" element={<PublicLetterDetail />} />
 
         {/* 로그인 후 페이지 (헤더/냅바 포함) */}
         <Route element={<Layout />}>
@@ -56,6 +58,8 @@ function App() {
             <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
             <Route path="detail/received/sky/:id" element={<ReceivedLetterDetail />} />
             <Route path="detail/sent/sky/:id" element={<SentLetterDetail />} />
+            {/* 이메일 링크 경로 추가 */}
+             <Route path="detail/:id" element={<ReceivedLetterDetail />} />
           </Route>
         </Route>
 
