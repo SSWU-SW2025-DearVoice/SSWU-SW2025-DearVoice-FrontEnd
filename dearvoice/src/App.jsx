@@ -10,7 +10,6 @@ import Signup from "./pages/Signup";
 import FindPassword from "./pages/FindPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/onboarding";
-import Register from "./pages/Register";
 
 // 로그인 후 페이지
 import Home from "./pages/Home";
@@ -24,8 +23,9 @@ import SentList from "./pages/mypage/SentList";
 import ReceivedList from "./pages/mypage/ReceivedList";
 import SentLetterDetail from "./pages/mypage/SentLetterDetail";
 import ReceivedLetterDetail from "./pages/mypage/ReceivedLetterDetail";
-import SkyVoiceLetterDetail from "./pages/mypage/SkyVoiceLetterDetail";
 import NotFound from "./pages/NotFound";
+import PublicLetterDetail from "./pages/PublicLetterDetail"; 
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -38,24 +38,29 @@ function App() {
         <Route path="/find-password" element={<FindPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/register" element={<Register />} />
 
         {/* 로그인 후 페이지 (헤더/냅바 포함) */}
         <Route element={<Layout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/voice" element={<VoiceLetterPage />} />
-          <Route path="/sky" element={<SkyLetterPage />} />
-          <Route path="/sky02" element={<SkyLetterPage02 />} />
+          <Route path="/share/:uuid" element={<PublicLetterDetail />} />
 
-          {/* 마이페이지 라우트 */}
-          <Route path="/mypage">
-            <Route index element={<MyPageHome />} />
-            <Route path="sent" element={<SentList />} />
-            <Route path="received" element={<ReceivedList />} />
-            <Route path="detail/sent/:id" element={<SentLetterDetail />} />
-            <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
-            <Route path="detail/received/sky/:id" element={<ReceivedLetterDetail />} />
-            <Route path="detail/sent/sky/:id" element={<SentLetterDetail />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/voice" element={<VoiceLetterPage />} />
+            <Route path="/sky" element={<SkyLetterPage />} />
+            <Route path="/sky02" element={<SkyLetterPage02 />} />
+
+            {/* 마이페이지 라우트 */}
+            <Route path="/mypage">
+              <Route index element={<MyPageHome />} />
+              <Route path="sent" element={<SentList />} />
+              <Route path="received" element={<ReceivedList />} />
+              <Route path="detail/sent/:id" element={<SentLetterDetail />} />
+              <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
+              <Route path="detail/received/sky/:id" element={<ReceivedLetterDetail />} />
+              <Route path="detail/sent/sky/:id" element={<SentLetterDetail />} />
+              {/* 이메일 링크 경로 추가 */}
+              <Route path="detail/:id" element={<ReceivedLetterDetail />} />
+            </Route>
           </Route>
         </Route>
 

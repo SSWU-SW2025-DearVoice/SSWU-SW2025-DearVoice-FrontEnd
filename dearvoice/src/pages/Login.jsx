@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../styles/Login.css";
+import axiosInstance from "../apis/axios"
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -28,15 +28,13 @@ const Login = () => {
     }
 
     try {
-    const response = await axios.post("http://127.0.0.1:8000/api/auth/login/", form, {
+    const response = await axiosInstance.post("/api/auth/login/", form, {
       headers: { "Content-Type": "application/json" }
     });
 
-    // ✅ access & refresh 토큰 저장
     localStorage.setItem("accessToken", response.data.access);
     localStorage.setItem("refreshToken", response.data.refresh);
 
-    // ✅ 로그인 성공 시 홈으로 이동
     navigate("/home");
     } catch (err) {
       setModalType("error");
@@ -106,11 +104,12 @@ const Login = () => {
             </button>
           </div>
         </div>
-      </div>
 
-      <button className="login-submit-btn" onClick={handleLogin}>
+        <button className="login-submit-btn" onClick={handleLogin}>
         로그인
       </button>
+
+      </div>
 
       {message && (
         <div className="login-message" style={{ color: "red" }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../apis/axios";
 import "../styles/Home.css";
 import homeletter from "../assets/images/homeletter.png";
 
@@ -15,7 +15,7 @@ const Home = () => {
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:8000/api/auth/me/", {
+        const response = await axiosInstance.get("/api/auth/me/", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

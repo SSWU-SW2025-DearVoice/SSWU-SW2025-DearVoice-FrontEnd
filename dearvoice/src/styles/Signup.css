@@ -20,7 +20,7 @@
   width: 300px;
   height: 350px;
   position: relative;
-  margin-top: 50px;
+  margin: auto 0;
 }
 
 .signup-title {
@@ -247,10 +247,11 @@
   cursor: pointer;
   width: 104px;
   height: 42px;
-  margin-top: 60px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
-  opacity: 0.6; /* 비활성화 상태에서 반투명 */
+  opacity: 0.6;
+  display: block;
+  margin: 60px auto 0 auto;
 }
 
 .signup-submit-btn.active {

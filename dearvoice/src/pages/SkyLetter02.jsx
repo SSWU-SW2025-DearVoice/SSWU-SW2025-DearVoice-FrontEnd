@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../apis/axios"
 
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
@@ -48,6 +48,8 @@ const SkyLetter02 = () => {
     handleSend: handleSendWithStatus,
   } = useSendStatus();
 
+  const textareaRef = useRef(null);
+
   useEffect(() => {
     let interval;
     if (isSending && !isSent) {
@@ -57,6 +59,16 @@ const SkyLetter02 = () => {
     }
     return () => clearInterval(interval);
   }, [isSending, isSent]);
+
+  // textarea 높이 자동 조절 (1~3줄)
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      const maxHeight = 60; // 3줄 높이(px)
+      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+    }
+  }, [transcript]);
 
   const setNow = () => {
     const now = new Date();
@@ -80,8 +92,8 @@ const SkyLetter02 = () => {
     const formData = new FormData();
     formData.append("file", fileBlob, "recording.wev");
 
-    const response = await axios.post(
-      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+    const response = await axiosInstance.post(
+      "/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
       formData,
       {
         headers: {
@@ -111,8 +123,8 @@ const SkyLetter02 = () => {
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
       
       // 2. audio_url을 JSON으로 전송
-      const response = await axios.post(
-        "http://127.0.0.1:8000/skyvoice/letters/transcribe/",
+      const response = await axiosInstance.post(
+        "/skyvoice/letters/transcribe/",
         { audio_url: s3Url },
         {
           headers: {
@@ -166,8 +178,8 @@ const SkyLetter02 = () => {
         // 기타 필요한 필드
       };
 
-      const response = await axios.post(
-        "http://127.0.0.1:8000/skyvoice/letters/",
+      const response = await axiosInstance.post(
+        "/skyvoice/letters/",
         payload,
         {
           headers: {
@@ -220,7 +232,7 @@ const SkyLetter02 = () => {
           <span className="letterdetail-label">제목ㅣ</span>
           <input
             type="text"
-            placeholder={`${today} 음성 편지`}
+            placeholder={`${today} 하늘 편지`}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -248,40 +260,37 @@ const SkyLetter02 = () => {
               <div style={{ color: "#007bff", fontSize: "14px" }}>
                 음성을 텍스트로 변환 중...
               </div>
-            ) : transcript ? (
-              <div className="transcript-result">
-                <div className="transcript-text">{transcript}</div>
-              </div>
-            ) : isRecorded ? (
-              <div style={{ color: "#999", fontSize: "14px" }}>
-                텍스트 변환을 준비 중입니다.
-              </div>
             ) : (
-              <div style={{ color: "#999", fontSize: "14px" }}>
-                녹음 완료 후 자동으로 텍스트로 변환됩니다.
-              </div>
+              <textarea
+                className="transcript-edit"
+                ref={textareaRef}
+                value={transcript}
+                onChange={e => setTranscript(e.target.value)}
+                placeholder="녹음 완료 후 자동으로 텍스트로 변환됩니다."
+                rows={1}
+              />
             )}
           </div>
         </div>
 
         <div className="letterdetail-row date-time-row">
-          <span className="letterdetail-label-exception">
-            시간 설정ㅣ
-            <button className="datetime-button" onClick={setNow}>
-              현재 시각으로
-            </button>
-          </span>
+          <span className="letterdetail-label">시간 설정ㅣ</span>
           <div className="datetime-inputs">
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              required
             />
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              required
             />
+          </div>
+          <div className="datetime-button">
+            <button onClick={setNow}>현재 시각으로 설정하기</button>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../styles/LetterDetailCard.css";
 import "../styles/VoiceLetter.css";
 
@@ -11,7 +11,7 @@ import lettercomplete from "../assets/images/letter-complete.svg"
 import { useTodayDate } from "../hooks/useTodayDate";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { useSendStatus } from "../hooks/useSendStatus";
-import axios from "axios";
+import axiosInstance from "../apis/axios"
 import { useNavigate } from "react-router-dom";
  
 
@@ -33,6 +33,8 @@ const VoiceLetter = () => {
     useAudioRecorder();
 
   const { isSending, isSent, setIsSent, handleSend, resetStatus } = useSendStatus();
+
+  const textareaRef = useRef(null);
 
   // 편지 생성 완료 시 모달 표시
   useEffect(() => {
@@ -89,13 +91,13 @@ const VoiceLetter = () => {
 
   // 음성을 텍스트로 변환하는 함수
   const uploadToS3 = async (fileBlob) => {
-    const accessToken = localStorage.getItem("accessToken"); // 🔥 추가됨
+    const accessToken = localStorage.getItem("accessToken");
 
     const formData = new FormData();
     formData.append("file", fileBlob, "recording.wev");
 
-    const response = await axios.post(
-      "http://localhost:8000/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+    const response = await axiosInstance.post(
+      "/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
       formData,
       {
         headers: {
@@ -105,7 +107,7 @@ const VoiceLetter = () => {
       }
     );
 
-    return response.data.url; // 🔹 실제 S3 URL
+    return response.data.url; // 실제 S3 URL
   };
 
   const transcribeAudio = async () => {
@@ -126,8 +128,8 @@ const VoiceLetter = () => {
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
 
       // 2. audio_url을 JSON으로 전송
-      const response = await axios.post(
-        "http://127.0.0.1:8000/letters/transcribe/",
+      const response = await axiosInstance.post(
+        "/api/letters/transcribe/",
         { audio_url: s3Url },
         {
           headers: {
@@ -181,8 +183,8 @@ const VoiceLetter = () => {
       title: title,
     };
 
-    const response = await axios.post(
-      "http://127.0.0.1:8000/letters/create/",
+    const response = await axiosInstance.post(
+      "/api/letters/create/",
       payload,
       {
         headers: {
@@ -211,6 +213,14 @@ const VoiceLetter = () => {
   }
 };
 
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      const maxHeight = 60; // 3줄 높이(px), 필요시 조정
+      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+    }
+  }, [transcript]);
 
   return (
     <>
@@ -218,7 +228,7 @@ const VoiceLetter = () => {
         <h2 className="mypage-top">음성 편지</h2>
       </div>
 
-      <div className={`letterdetail-box letterdetail-audio ${selectedColor}`}>
+      <div className={`letterdetail-box ${selectedColor}`}>
         <div className="letterdetail-row">
           <span className="letterdetail-label">수신인ㅣ</span>
           <span className="letterdetail-input">
@@ -264,24 +274,27 @@ const VoiceLetter = () => {
               <div style={{ color: '#007bff', fontSize: '14px' }}>
                 음성을 텍스트로 변환 중..
               </div>
-            ) : transcript && transcript.length > 0 ? (
-              <div className="transcript-result">
-                <div className="transcript-text">{transcript}</div>
-              </div>
-            ) : isRecorded ? (
-              <div style={{ color: '#999', fontSize: '14px' }}>
-                텍스트 변환을 준비 중입니다.
-              </div>
             ) : (
-              <div style={{ color: '#999', fontSize: '14px' }}>
-                녹음 완료 후 자동으로 텍스트로 변환됩니다.
-              </div>
+              <textarea
+                className="transcript-edit"
+                ref={textareaRef}
+                value={transcript}
+                onChange={e => setTranscript(e.target.value)}
+                placeholder="녹음 완료 후 자동으로 텍스트로 변환됩니다."
+                rows={1}
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "60px", // 3줄 높이
+                  minHeight: "20px", // 1줄 높이
+                  height: "auto",
+                }}
+              />
             )}
           </div>
         </div>
 
         <div className="letterdetail-row date-time-row">
-          <span className="letterdetail-label">예약 전송ㅣ</span>
+          <span className="letterdetail-label">시간 설정ㅣ</span>
           <div className="datetime-inputs">
             <input
               type="date"
@@ -302,7 +315,7 @@ const VoiceLetter = () => {
         </div>
 
         {recordedBlob && (
-          <audio controls src={URL.createObjectURL(recordedBlob)} />
+          <audio controls src={URL.createObjectURL(recordedBlob)} className="custom-audio" />
         )}
 
         <div className="letterdetail-audio">

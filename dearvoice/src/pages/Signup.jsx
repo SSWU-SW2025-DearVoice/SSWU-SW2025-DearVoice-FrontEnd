@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../apis/axios"
 import "../styles/Signup.css";
 import letterlogo from "../assets/images/letter-before.png";
 
@@ -94,8 +94,8 @@ const Signup = () => {
       return;
     }
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/api/auth/check/user-id/",
+      const res = await axiosInstance.get(
+        "/api/auth/check/user-id/",
         { params: { user_id: form.user_id } }
       );
       if (res.data.available) {
@@ -130,8 +130,8 @@ const Signup = () => {
       return;
     }
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/api/auth/check/email/",
+      const res = await axiosInstance.get(
+        "/api/auth/check/email/",
         { params: { email: form.email } }
       );
       if (res.data.available) {
@@ -174,7 +174,7 @@ const Signup = () => {
       // passwordConfirm 제거하고 백엔드에 전송
       const { passwordConfirm, ...signupData } = form;
 
-      await axios.post("http://127.0.0.1:8000/api/auth/signup/", signupData, {
+      await axiosInstance.post("/api/auth/signup/", signupData, {
         headers: { "Content-Type": "application/json" },
       });
       setShowModal(true);
@@ -287,15 +287,15 @@ const Signup = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      <button
+        <button
         className={`signup-submit-btn ${isFormValid ? "active" : ""}`}
         onClick={handleSignup}
         disabled={!isFormValid}
       >
         회원가입
       </button>
+      </div>
 
       {message && (
         <div

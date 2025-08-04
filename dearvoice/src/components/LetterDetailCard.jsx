@@ -33,12 +33,12 @@ const LetterDetailCard = ({
     senderValue = letter.receiver_name || "정보 없음";
     recipientValue = letter.receiver_name || "정보 없음";
   } else {
-    senderValue = letter.sender?.display_id || letter.sender?.email || "정보 없음";
-    recipientValue = letter.recipients?.map(r => r.email).join(", ") || "정보 없음";
+    senderValue = letter.recipients?.map(r => r.email).join(", ") || "정보 없음";
+    recipientValue = letter.sender?.display_id || letter.sender?.email || "정보 없음";
   }
 
   return (
-    <div className={`letterdetail-box letterdetail-${letter.paper_color || "gray"}`}>
+    <div className={`letterdetail-box letterdetail-${letter.paper_color || letter.color || "gray"}`}>
       {/* 발신자/수신자 정보 */}
       <div className="letterdetail-row">
         <span className="letterdetail-label">

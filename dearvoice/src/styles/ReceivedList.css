@@ -21,7 +21,7 @@
   margin-bottom: 60px;
   margin-left: 25px;
   margin-right: 25px;
-  margin-top: 70px;
+  margin-top: 25px;
 }
 
 .received-item {
@@ -122,4 +122,23 @@
 .pagination-arrow:disabled .arrow-start,
 .pagination-arrow:disabled .arrow-end {
   opacity: 0.4;
+}
+
+.received-filter-btn{
+  height: 30px;
+  color: #fff;
+  margin-left: 25px;
+  background: none;
+  border-radius: 10px;
+  border: none;
+  background-color: #e3e3e3;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-right: -10px;
+}
+
+.received-filter-btn.active {
+  background-color: #F9CB73;
+  color: #3B2F2F;
 }
