@@ -21,7 +21,7 @@
   margin-bottom: 60px;
   margin-left: 25px;
   margin-right: 25px;
-  margin-top: 70px;
+  margin-top: 25px;
 }
 
 .sent-item {
@@ -69,7 +69,6 @@
     background: none;
     background-color: transparent;
     border: none;
-    margin-left: auto;
     cursor: pointer;
     padding-right: 3px;
 }
@@ -119,11 +118,30 @@
   height: 24px;
 }
 
-/* 💡 보낸편지삭제 */
+
+.sent-filter-btn{
+  height: 30px;
+  color: #fff;
+  background: none;
+  border-radius: 10px;
+  border: none;
+  background-color: #e3e3e3;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-left: 25px;
+  margin-right: -10px;
+}
+
+.sent-filter-btn.active {
+  background-color: #F9CB73;
+  color: #3B2F2F;
+}
+
 .sent-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 1px;   /* 기존 8px에서 2px로 줄임 */
   margin-left: auto;
 }
 
@@ -131,7 +149,7 @@
   background: transparent;
   border: none;
   color: #d62828;
-  font-size: 18px;
+  font-size: 13px;
   cursor: pointer;
   padding: 4px;
   transition: transform 0.1s ease;

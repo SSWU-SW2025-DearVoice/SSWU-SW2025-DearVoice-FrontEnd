@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "../../styles/LetterDetail.css";
 import LetterDetailCard from "../../components/LetterDetailCard";
-import axios from "axios";
+import axiosInstance from "../../apis/axios";
 
 function SentLetterDetail() {
   const { id } = useParams();
@@ -16,10 +16,10 @@ function SentLetterDetail() {
     const accessToken = localStorage.getItem("accessToken");
 
     const url = isSkyLetter
-      ? `http://localhost:8000/skyvoice/letters/${id}/`
-      : `http://localhost:8000/api/letters/${id}/`;
+      ? `/skyvoice/letters/${id}/`
+      : `/api/letters/${id}/`;
 
-    axios
+    axiosInstance
       .get(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,

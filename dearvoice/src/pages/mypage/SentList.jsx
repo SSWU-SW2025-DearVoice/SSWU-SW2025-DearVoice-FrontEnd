@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/SentList.css';
-import axios from 'axios';
+import axiosInstance from "../../apis/axios";
 import arrow from '../../assets/images/arrow.png';
 import arrowstart from '../../assets/images/arrow-start.png';
 
@@ -20,11 +20,12 @@ const SentList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [filterType, setFilterType] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    axios.get(`http://localhost:8000/api/mypage/sent/?page=${page}`, {
+    axiosInstance.get(`/api/mypage/sent/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -43,7 +44,7 @@ const SentList = () => {
 
     const token = localStorage.getItem("accessToken");
     try {
-      await axios.delete(`http://localhost:8000/api/mypage/sent/delete/${letterType}/${letterId}/`, {
+      await axiosInstance.delete(`/api/mypage/sent/delete/${letterType}/${letterId}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,6 +59,15 @@ const SentList = () => {
   };
 
   const safeLetters = Array.isArray(letters) ? letters : [];
+
+  // 카테고리 필터링
+  const filteredLetters = safeLetters.filter(item => {
+    if (filterType === "all") return true;
+    if (filterType === "sky") return item.type === "sky";
+    if (filterType === "voice") return item.type !== "sky";
+    return true;
+  });
+
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
@@ -66,43 +76,67 @@ const SentList = () => {
   return (
     <div className="sentlist-wrapper">
       <h2 className="sentlist-title">내 보관소 - 보낸 편지함</h2>
+      <div>
+        <button
+          className={`sent-filter-btn${filterType === "all" ? " active" : ""}`}
+          onClick={() => setFilterType("all")}
+        >전체</button>
+        <button
+          className={`sent-filter-btn${filterType === "voice" ? " active" : ""}`}
+          onClick={() => setFilterType("voice")}
+        >음성편지</button>
+        <button
+          className={`sent-filter-btn${filterType === "sky" ? " active" : ""}`}
+          onClick={() => setFilterType("sky")}
+        >하늘편지</button>
+      </div>
       <div className="sentlist-list">
-        {safeLetters.length === 0 ? (
+        {filteredLetters.length === 0 ? (
           <p className="no-letters">보낸 편지가 없습니다.</p>
         ) : (
-          safeLetters.map(item => (
-            <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
-              <span className="sent-title">[ {item.title?.slice(0, 15)} ]</span>
-              <span className="sent-user">
-                {item.type === "sky"
-                  ? "하늘편지"
-                  : `일반편지 → @${item.recipients?.[0]?.display_id || item.recipients?.[0]?.email || "수신자 없음"}`}
-              </span>
-              
-              {/* 편지 삭제 */}
-              <div className="sent-actions">
-                <button
-                  className="sent-detail"
-                  onClick={() =>
-                    navigate(
-                      item.type === "sky"
-                        ? `/mypage/detail/sent/sky/${item.id}`
-                        : `/mypage/detail/sent/${item.id}`
-                    )
-                  }
-                >
-                  <img src={arrow} className='arrow' alt="arrow" />
-                </button>
+          filteredLetters.map(item => {
+            // 수신자 표시 로직
+            let recipientValue = "정보 없음";
+            if (item.type === "sky") {
+              recipientValue = item.receiver_name || "정보 없음";
+            } else {
+              // 여러 명일 경우 이메일/아이디를 ,로 연결
+              recipientValue =
+                item.recipients?.map(r => r.display_id || r.email).join(", ") || "정보 없음";
+            }
 
-                <button
-                  className="sent-delete"
-                  onClick={() => handleDelete(item.id, item.type)}
-                >
-                  🗑️
-                </button>
+            return (
+              <div key={item.id} className={`sent-item ${colorClass[item.paper_color] || "sent-item-gray"}`}>
+                <span className="sent-title">[ {item.title?.slice(0, 15)} ]</span>
+                <span className="sent-user">
+                  {recipientValue}
+                </span>
+                
+                {/* 편지 삭제 */}
+                <div className="sent-actions">
+                  <button
+                    className="sent-detail"
+                    onClick={() =>
+                      navigate(
+                        item.type === "sky"
+                          ? `/mypage/detail/sent/sky/${item.id}`
+                          : `/mypage/detail/sent/${item.id}`
+                      )
+                    }
+                  >
+                    <img src={arrow} className='arrow' alt="arrow" />
+                  </button>
+
+                  <button
+                    className="sent-delete"
+                    onClick={() => handleDelete(item.id, item.type)}
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

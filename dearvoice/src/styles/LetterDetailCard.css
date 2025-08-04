@@ -3,6 +3,16 @@
 .letterdetail-box {
   border-radius: 20px;
   padding: 28px 18px 23px 18px;
+  margin: 50px 25px;
+  box-shadow: 0 2px 6px #0004;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.public-letterdetail-box {
+  border-radius: 20px;
+  padding: 28px 18px 23px 18px;
   margin: 70px 25px;
   box-shadow: 0 2px 6px #0004;
   display: flex;
@@ -86,3 +96,21 @@
   width: 50px;
   height: 50px;
 }
+
+.letterdetail-loginbtn{
+  margin: 10px auto 0 auto;
+  padding: 5px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #f9cb73;
+  color: black;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.letterdetail-loginbtn:hover{
+  background-color: #ffc04b;
+}
+
+

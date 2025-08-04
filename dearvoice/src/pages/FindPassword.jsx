@@ -100,11 +100,10 @@ const FindPassword = () => {
             </button>
           </div>
         </div>
-      </div>
-      
-      <button className="find-password-btn" onClick={handleSubmit}>
+         <button className="find-password-btn" onClick={handleSubmit}>
         비밀번호 재설정
       </button>
+      </div>
       
       {message && (
         <div className="find-password-message" style={{ color: "red" }}>
