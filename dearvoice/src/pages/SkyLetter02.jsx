@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axios";
 
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
@@ -39,8 +39,13 @@ const SkyLetter02 = () => {
   const [uploadedUrl, setUploadedUrl] = useState(null);
   const [response, setResponse] = useState(null);
 
-  const { isRecording, isRecorded, handleRecordClick, recordedBlob } =
-    useAudioRecorder();
+  const {
+    isRecording,
+    isRecorded,
+    handleRecordClick,
+    recordedBlob,
+    resetRecorder,
+  } = useAudioRecorder();
 
   const {
     isSending,
@@ -118,10 +123,10 @@ const SkyLetter02 = () => {
     setIsTranscribing(true);
     try {
       // 1. S3에 업로드
-      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 이미 업로드된 URL 있으면 재사용
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 이미 업로드된 URL 있으면 재사용
       setUploadedUrl(s3Url); //한 번만 저장
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
-      
+
       // 2. audio_url을 JSON으로 전송
       const response = await axiosInstance.post(
         "/skyvoice/letters/transcribe/",
@@ -162,7 +167,7 @@ const SkyLetter02 = () => {
     }
 
     try {
-      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 재사용
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 재사용
       setUploadedUrl(s3Url); // 혹시 없었으면 저장
 
       const payload = {
@@ -173,22 +178,18 @@ const SkyLetter02 = () => {
         color: selectedColor,
         title,
         scheduled_at: `${date}T${time}:00`,
-        audio_url: s3Url,        // S3 업로드 후 받은 URL
-        content_text: transcript,       // 텍스트 변환 결과
+        audio_url: s3Url, // S3 업로드 후 받은 URL
+        content_text: transcript, // 텍스트 변환 결과
         // 기타 필요한 필드
       };
 
-      const response = await axiosInstance.post(
-        "/skyvoice/letters/",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      
+      const response = await axiosInstance.post("/skyvoice/letters/", payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       // if (response.data && response.data.transcript) {
       //   setTranscript(response.data.transcript);
       // }
@@ -265,7 +266,7 @@ const SkyLetter02 = () => {
                 className="transcript-edit"
                 ref={textareaRef}
                 value={transcript}
-                onChange={e => setTranscript(e.target.value)}
+                onChange={(e) => setTranscript(e.target.value)}
                 placeholder="녹음 완료 후 자동으로 텍스트로 변환됩니다."
                 rows={1}
               />
@@ -306,7 +307,7 @@ const SkyLetter02 = () => {
           <button
             className="letterdetail-play"
             onClick={handleRecordClick}
-            disabled={isRecorded}
+            // disabled={isRecorded}
           >
             <img
               src={
@@ -322,6 +323,20 @@ const SkyLetter02 = () => {
           </button>
         </div>
       </div>
+      {isRecorded && (
+        <div className="letterdetail-row" style={{ marginTop: "10px" }}>
+          <button
+            onClick={() => {
+              resetRecorder();
+              setUploadedUrl(null); // 재녹음 시작할 때 기존 URL 초기화
+              setTranscript(""); // 기존 텍스트 초기화(필요시)
+            }}
+            className="reRecordButton"
+          >
+            🔁 다시 녹음하기
+          </button>
+        </div>
+      )}
 
       <div className="bottomButton">
         <button

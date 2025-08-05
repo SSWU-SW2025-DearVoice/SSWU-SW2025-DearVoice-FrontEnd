@@ -186,13 +186,6 @@ const VoiceLetter = () => {
 
     try {
       const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 재사용
-      console.log("🔵 S3 URL:", s3Url);
-      console.log("📋 transcript:", transcript);
-      console.log("🎨 selectedColor:", selectedColor);
-      console.log("📅 date:", date);
-      console.log("⏰ time:", time);
-      console.log("📨 recipient:", recipient);
-      console.log("📌 title:", title);
       setUploadedUrl(s3Url); // 혹시 없었으면 저장
 
       const payload = {
