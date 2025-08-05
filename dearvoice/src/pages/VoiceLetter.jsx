@@ -178,7 +178,7 @@ const VoiceLetter = () => {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       navigate("/login");
-      return;
+      return false; // 실패 시 false 반환
     }
 
     // try 밖에 payload 선언용 변수 미리 선언 (초기값은 빈 객체)
@@ -219,8 +219,10 @@ const VoiceLetter = () => {
 
       if (response.status === 201) {
         setIsSent(true); // 성공 시 모달 표시
+        return true;
       } else {
         alert("편지 전송 실패: 알 수 없는 오류");
+        return false;
       }
     } catch (err) {
       if (err.response?.status === 401) {
@@ -233,6 +235,7 @@ const VoiceLetter = () => {
       } else {
         alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
       }
+      return false;
     }
   };
 
