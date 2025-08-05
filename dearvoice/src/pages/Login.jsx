@@ -10,7 +10,7 @@ const Login = () => {
   });
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // "error"만 사용
+  const [modalType, setModalType] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {

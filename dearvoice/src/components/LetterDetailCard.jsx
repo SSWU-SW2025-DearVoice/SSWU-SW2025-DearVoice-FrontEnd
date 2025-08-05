@@ -3,6 +3,7 @@ import audio from "../assets/images/audio.png";
 import audioActive from "../assets/images/audio-active.png";
 import "../styles/LetterDetailCard.css";
 import useAudioPlayer from "../hooks/useLetterAudio";
+import { TypeAnimation } from "react-type-animation";
 
 const LetterDetailCard = ({
   letter,
@@ -133,9 +134,18 @@ const LetterDetailCard = ({
               textAlign: "center",
             }}
           >
-            {isSky && isReplyLoading
-              ? "AI 답장을 생성 중입니다..."
-              : reply}
+            {isSky && isReplyLoading ? (
+              "AI 답장을 생성 중입니다..."
+            ) : (
+              reply ? (
+                <TypeAnimation
+                  sequence={[reply]}
+                  wrapper="span"
+                  speed={20}
+                  style={{ display: "inline-block", whiteSpace: "pre-line" }}
+                  cursor={false}
+                />
+              ) : "답장 없음")}
           </div>
           {replyAudio && (
             <audio controls src={replyAudio} style={{ width: "100%", maxWidth: 400, margin: "0 auto" }} />
