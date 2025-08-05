@@ -5,15 +5,14 @@ import "../styles/VoiceLetter.css";
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
 import recordCompleted from "../assets/images/record-complete.png";
-import letterbefore from "../assets/images/letter-before.png"
-import lettercomplete from "../assets/images/letter-complete.svg"
+import letterbefore from "../assets/images/letter-before.png";
+import lettercomplete from "../assets/images/letter-complete.svg";
 
 import { useTodayDate } from "../hooks/useTodayDate";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { useSendStatus } from "../hooks/useSendStatus";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axios";
 import { useNavigate } from "react-router-dom";
- 
 
 const VoiceLetter = () => {
   const [recipient, setRecipient] = useState("");
@@ -29,10 +28,16 @@ const VoiceLetter = () => {
   const today = useTodayDate();
   const navigate = useNavigate();
 
-  const { isRecording, isRecorded, recordedBlob, handleRecordClick } =
-    useAudioRecorder();
+  const {
+    isRecording,
+    isRecorded,
+    recordedBlob,
+    handleRecordClick,
+    resetRecorder,
+  } = useAudioRecorder();
 
-  const { isSending, isSent, setIsSent, handleSend, resetStatus } = useSendStatus();
+  const { isSending, isSent, setIsSent, handleSend, resetStatus } =
+    useSendStatus();
 
   const textareaRef = useRef(null);
 
@@ -51,29 +56,29 @@ const VoiceLetter = () => {
     setDate("");
     setTime("");
     setTranscript("");
-    
+
     // 전송 상태 초기화
     resetStatus(); // 또는 setIsSent(false)
-    
+
     // 모달 닫기
     setShowModal(false);
-    
+
     // 홈으로 이동
-    navigate('/home');
+    navigate("/home");
   };
 
   // ESC 키로 모달 닫기 방지
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && showModal) {
+      if (e.key === "Escape" && showModal) {
         e.preventDefault();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [showModal]);
 
@@ -122,7 +127,8 @@ const VoiceLetter = () => {
     setIsTranscribing(true);
     try {
       // 1. S3에 업로드
-      const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 이미 업로드된 URL 있으면 재사용
+      // const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 이미 업로드된 URL 있으면 재사용
+      const s3Url = await uploadToS3(recordedBlob);
       setUploadedUrl(s3Url); //한 번만 저장
 
       console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
@@ -163,55 +169,72 @@ const VoiceLetter = () => {
   const isFormComplete = recipient && date && time && isRecorded;
 
   // 편지 생성
+
+  console.log("transcript:", transcript);
+  console.log("uploadedUrl:", uploadedUrl);
+  console.log("recordedBlob:", recordedBlob);
+
   const sendMyLetter = async () => {
-  const accessToken = localStorage.getItem("accessToken");
-  if (!accessToken) {
-    navigate("/login");
-    return;
-  }
-
-  try {
-    const s3Url = uploadedUrl || await uploadToS3(recordedBlob); // 재사용
-    setUploadedUrl(s3Url); // 혹시 없었으면 저장
-    
-    const payload = {
-      recipients: [{ email: recipient }], 
-      paper_color: selectedColor,
-      scheduled_at: `${date}T${time}:00`,
-      audio_url: s3Url,
-      transcript: transcript,
-      title: title,
-    };
-
-    const response = await axiosInstance.post(
-      "/api/letters/create/",
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (response.status === 201) {
-      setIsSent(true); // 성공 시 모달 표시
-    } else {
-      alert("편지 전송 실패: 알 수 없는 오류");
-    }
-
-  } catch (err) {
-    if (err.response?.status === 401) {
-      alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
       navigate("/login");
-    } else if (err.response?.status === 400) {
-      alert("입력 정보를 확인해주세요.");
-      console.log("보낸 데이터:", JSON.stringify(recipients));
-    } else {
-      alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
+      return;
     }
-  }
-};
+
+    // try 밖에 payload 선언용 변수 미리 선언 (초기값은 빈 객체)
+    let payload = {};
+
+    try {
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 재사용
+      console.log("🔵 S3 URL:", s3Url);
+      console.log("📋 transcript:", transcript);
+      console.log("🎨 selectedColor:", selectedColor);
+      console.log("📅 date:", date);
+      console.log("⏰ time:", time);
+      console.log("📨 recipient:", recipient);
+      console.log("📌 title:", title);
+      setUploadedUrl(s3Url); // 혹시 없었으면 저장
+
+      const payload = {
+        recipients: [{ email: recipient }],
+        paper_color: selectedColor,
+        scheduled_at: `${date}T${time}:00`,
+        audio_url: s3Url,
+        transcript: transcript,
+        title: title,
+      };
+
+      console.log("📤 최종 payload:", payload);
+
+      const response = await axiosInstance.post(
+        "/api/letters/create/",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        setIsSent(true); // 성공 시 모달 표시
+      } else {
+        alert("편지 전송 실패: 알 수 없는 오류");
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/login");
+      } else if (err.response?.status === 400) {
+        console.log("백엔드 응답:", err.response?.data);
+        alert("입력 정보를 확인해주세요.");
+        console.log("보낸 데이터:", JSON.stringify(payload));
+      } else {
+        alert("편지 전송에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
+  };
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -271,7 +294,7 @@ const VoiceLetter = () => {
           <span className="letterdetail-label">텍스트 변환ㅣ</span>
           <div className="letterdetail-text">
             {isTranscribing ? (
-              <div style={{ color: '#007bff', fontSize: '14px' }}>
+              <div style={{ color: "#007bff", fontSize: "14px" }}>
                 음성을 텍스트로 변환 중..
               </div>
             ) : (
@@ -279,7 +302,7 @@ const VoiceLetter = () => {
                 className="transcript-edit"
                 ref={textareaRef}
                 value={transcript}
-                onChange={e => setTranscript(e.target.value)}
+                onChange={(e) => setTranscript(e.target.value)}
                 placeholder="녹음 완료 후 자동으로 텍스트로 변환됩니다."
                 rows={1}
                 style={{
@@ -315,14 +338,18 @@ const VoiceLetter = () => {
         </div>
 
         {recordedBlob && (
-          <audio controls src={URL.createObjectURL(recordedBlob)} className="custom-audio" />
+          <audio
+            controls
+            src={URL.createObjectURL(recordedBlob)}
+            className="custom-audio"
+          />
         )}
 
         <div className="letterdetail-audio">
           <button
             className="letterdetail-play"
             onClick={handleRecordClick}
-            disabled={isRecorded}
+            // disabled={isRecorded}
           >
             <img
               src={
@@ -337,6 +364,20 @@ const VoiceLetter = () => {
             />
           </button>
         </div>
+        {isRecorded && (
+          <div className="letterdetail-row" style={{ marginTop: "10px" }}>
+            <button
+              onClick={() => {
+                resetRecorder();
+                setUploadedUrl(null); // 재녹음 시작할 때 기존 URL 초기화
+                setTranscript(""); // 기존 텍스트 초기화(필요시)
+              }}
+              className="reRecordButton"
+            >
+              🔁 다시 녹음하기
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bottomButton">
@@ -344,7 +385,8 @@ const VoiceLetter = () => {
           className={`sendButton ${isFormComplete ? "active" : ""}`}
           onClick={() => isFormComplete && handleSend(sendMyLetter)}
           disabled={!isFormComplete || isSending}
-        >전송하기
+        >
+          전송하기
         </button>
       </div>
 
@@ -362,21 +404,22 @@ const VoiceLetter = () => {
 
       {/* 편지 전송 완료 모달 */}
       {showModal && isSent && (
-        <div 
+        <div
           className="modal-overlay"
           onClick={(e) => e.stopPropagation()} // 배경 클릭 방지
         >
-          <div 
+          <div
             className="modal-box"
             onClick={(e) => e.stopPropagation()} // 모달 클릭 시 이벤트 전파 방지
           >
             <div className="modal-content">
-              <img className="lettercomplete" src={lettercomplete} alt="전송 완료" />
+              <img
+                className="lettercomplete"
+                src={lettercomplete}
+                alt="전송 완료"
+              />
               <h3>음성 편지 전송 완료!</h3>
-              <button 
-                className="modal-button"
-                onClick={handleGoHome}
-              >
+              <button className="modal-button" onClick={handleGoHome}>
                 홈으로
               </button>
             </div>
