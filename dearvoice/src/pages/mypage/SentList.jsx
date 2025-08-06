@@ -20,23 +20,23 @@ const SentList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [filterType, setFilterType] = useState("all");
   const navigate = useNavigate();
 
+  // 백엔드에서 전체 리스트 불러오기
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    axiosInstance.get(`/api/mypage/sent/?page=${page}`, {
+    axiosInstance.get(`/api/mypage/sent/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(res => {
-      setLetters(res.data.results || []);
-      setTotalCount(res.data.count || 0);
+      setLetters(res.data || []);
+      setTotalCount((res.data || []).length);
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
-  }, [page]);
-  
+  }, []);
+
   /* 편지 삭제 */
   const handleDelete = async (letterId, letterType) => {
     const confirmed = window.confirm("정말 이 편지를 삭제하시겠습니까?");
@@ -51,7 +51,15 @@ const SentList = () => {
       });
 
       alert("삭제가 완료되었습니다.");
-      setLetters(prev => prev.filter(item => item.id !== letterId));
+      const updated = letters.filter(item => item.id !== letterId);
+      setLetters(updated);
+      setTotalCount(updated.length);
+
+      const lastPage = Math.ceil(updated.length / ITEMS_PER_PAGE);
+      if (page > lastPage) {
+        setPage(lastPage);
+      }
+
     } catch (err) {
       console.error("편지 삭제 실패", err);
       alert("삭제에 실패했습니다.");
@@ -60,15 +68,13 @@ const SentList = () => {
 
   const safeLetters = Array.isArray(letters) ? letters : [];
 
-  // 카테고리 필터링
-  const filteredLetters = safeLetters.filter(item => {
-    if (filterType === "all") return true;
-    if (filterType === "sky") return item.type === "sky";
-    if (filterType === "voice") return item.type !== "sky";
-    return true;
-  });
+  // slice로 페이지 분할
+  const currentLetters = safeLetters.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
 
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(safeLetters.length / ITEMS_PER_PAGE);
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
@@ -76,31 +82,16 @@ const SentList = () => {
   return (
     <div className="sentlist-wrapper">
       <h2 className="sentlist-title">내 보관소 - 보낸 편지함</h2>
-      <div>
-        <button
-          className={`sent-filter-btn${filterType === "all" ? " active" : ""}`}
-          onClick={() => setFilterType("all")}
-        >전체</button>
-        <button
-          className={`sent-filter-btn${filterType === "voice" ? " active" : ""}`}
-          onClick={() => setFilterType("voice")}
-        >음성편지</button>
-        <button
-          className={`sent-filter-btn${filterType === "sky" ? " active" : ""}`}
-          onClick={() => setFilterType("sky")}
-        >하늘편지</button>
-      </div>
+
       <div className="sentlist-list">
-        {filteredLetters.length === 0 ? (
+        {currentLetters.length === 0 ? (
           <p className="no-letters">보낸 편지가 없습니다.</p>
         ) : (
-          filteredLetters.map(item => {
-            // 수신자 표시 로직
+          currentLetters.map(item => {
             let recipientValue = "정보 없음";
             if (item.type === "sky") {
               recipientValue = item.receiver_name || "정보 없음";
             } else {
-              // 여러 명일 경우 이메일/아이디를 ,로 연결
               recipientValue =
                 item.recipients?.map(r => r.display_id || r.email).join(", ") || "정보 없음";
             }
@@ -111,8 +102,7 @@ const SentList = () => {
                 <span className="sent-user">
                   {recipientValue}
                 </span>
-                
-                {/* 편지 삭제 */}
+
                 <div className="sent-actions">
                   <button
                     className="sent-detail"
