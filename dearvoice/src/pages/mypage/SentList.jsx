@@ -4,6 +4,7 @@ import '../../styles/SentList.css';
 import axiosInstance from "../../apis/axios";
 import arrow from '../../assets/images/arrow.png';
 import arrowstart from '../../assets/images/arrow-start.png';
+import { FaSearch } from "react-icons/fa";
 
 const colorClass = {
   green: "sent-item-green",
@@ -20,6 +21,8 @@ const SentList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] = useState(""); // 검색어 상태
+  const [searchInput, setSearchInput] = useState(""); // 입력창 상태
   const navigate = useNavigate();
 
   // 백엔드에서 전체 리스트 불러오기
@@ -36,6 +39,37 @@ const SentList = () => {
     })
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
   }, []);
+
+  // recipientValue 기준으로 검색
+  const safeLetters = Array.isArray(letters) ? letters : [];
+  const filteredLetters = safeLetters.filter(item => {
+    if (!search.trim()) return true;
+    let recipientValue = "";
+    if (item.type === "sky") {
+      recipientValue = item.receiver_name || "";
+    } else {
+      recipientValue = item.recipients?.map(r => r.display_id || r.email).join(", ") || "";
+    }
+    return recipientValue.includes(search.trim());
+  });
+
+  // 페이지네이션
+  const totalPages = Math.ceil(filteredLetters.length / ITEMS_PER_PAGE);
+  const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
+  const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
+  const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
+
+  // slice로 페이지 분할
+  const currentLetters = filteredLetters.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+    setPage(1); // 검색 시 1페이지로 이동
+  };
 
   /* 편지 삭제 */
   const handleDelete = async (letterId, letterType) => {
@@ -66,23 +100,24 @@ const SentList = () => {
     }
   };
 
-  const safeLetters = Array.isArray(letters) ? letters : [];
-
-  // slice로 페이지 분할
-  const currentLetters = safeLetters.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
-  const totalPages = Math.ceil(safeLetters.length / ITEMS_PER_PAGE);
-  const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
-  const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
-  const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
-
   return (
     <div className="sentlist-wrapper">
-      <h2 className="sentlist-title">내 보관소 - 보낸 편지함</h2>
-
+      <h2 className="sentlist-title" >내 보관소 - 보낸 편지함</h2>
+      <div className="sentlist-searchbar-wrapper">
+        <div className="sentlist-searchbar-inner">
+          <input
+            type="text"
+            placeholder="수신인 검색"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className="sentlist-search-input"
+          />
+          <FaSearch
+            className="sentlist-search-icon"
+            onClick={handleSearch}
+          />
+        </div>
+      </div>
       <div className="sentlist-list">
         {currentLetters.length === 0 ? (
           <p className="no-letters">보낸 편지가 없습니다.</p>
@@ -102,7 +137,6 @@ const SentList = () => {
                 <span className="sent-user">
                   {recipientValue}
                 </span>
-
                 <div className="sent-actions">
                   <button
                     className="sent-detail"
@@ -116,7 +150,6 @@ const SentList = () => {
                   >
                     <img src={arrow} className='arrow' alt="arrow" />
                   </button>
-
                   <button
                     className="sent-delete"
                     onClick={() => handleDelete(item.id, item.type)}
@@ -129,7 +162,6 @@ const SentList = () => {
           })
         )}
       </div>
-
       <div className="sentlist-pagination">
         <button
           className='pagination-arrow'
@@ -138,7 +170,6 @@ const SentList = () => {
         >
           <img src={arrowstart} className='arrow-start' alt="prev" />
         </button>
-
         {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => {
           const pageNum = groupStart + i;
           return (
@@ -151,7 +182,6 @@ const SentList = () => {
             </button>
           );
         })}
-
         <button
           className='pagination-arrow'
           disabled={page === totalPages}

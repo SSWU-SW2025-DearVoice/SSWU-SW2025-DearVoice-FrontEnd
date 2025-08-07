@@ -4,6 +4,7 @@ import "../../styles/ReceivedList.css";
 import arrow from "../../assets/images/arrow.png";
 import arrowstart from "../../assets/images/arrow-start.png";
 import axiosInstance from "../../apis/axios";
+import { FaSearch } from "react-icons/fa";
 
 const colorClass = {
   green: "sent-item-green",
@@ -21,6 +22,8 @@ const ReceivedList = () => {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
+  const [search, setSearch] = useState(""); // 검색어 상태
+  const [searchInput, setSearchInput] = useState(""); // 입력창 상태
 
   // 백엔드에서 전체 리스트 불러오기
   useEffect(() => {
@@ -37,15 +40,32 @@ const ReceivedList = () => {
     .catch(err => console.error('받은 편지 불러오기 실패', err));
   }, []);
 
+    // recipientValue 기준으로 검색
   const safeLetters = Array.isArray(letters) ? letters : [];
+  const filteredLetters = safeLetters.filter(item => {
+    if (!search.trim()) return true;
+    let recipientValue = "";
+    if (item.type === "sky") {
+      recipientValue = item.receiver_name || "";
+    } else {
+      recipientValue = item.recipients?.map(r => r.display_id || r.email).join(", ") || "";
+    }
+    return recipientValue.includes(search.trim());
+  });
 
   // slice로 페이지 분할
-  const currentLetters = safeLetters.slice(
+  const currentLetters = filteredLetters.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
-  const totalPages = Math.ceil(safeLetters.length / ITEMS_PER_PAGE);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+    setPage(1);
+  };
+
+  const totalPages = Math.ceil(filteredLetters.length / ITEMS_PER_PAGE);
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
@@ -53,7 +73,21 @@ const ReceivedList = () => {
   return (
     <div className="receivedlist-wrapper">
       <h2 className="receivedlist-title">내 보관소 - 받은 편지함</h2>
-
+      <div className="sentlist-searchbar-wrapper">
+        <div className="sentlist-searchbar-inner">
+          <input
+            type="text"
+            placeholder="수신인 검색"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className="sentlist-search-input"
+          />
+          <FaSearch
+            className="sentlist-search-icon"
+            onClick={handleSearch}
+          />
+        </div>
+      </div>
       <div className="receivedlist-list">
         {currentLetters.length === 0 ? (
           <p className="no-letters">받은 편지가 없습니다.</p>
@@ -103,7 +137,6 @@ const ReceivedList = () => {
           })
         )}
       </div>
-
       <div className="receivedlist-pagination">
         <button
           className='pagination-arrow'
