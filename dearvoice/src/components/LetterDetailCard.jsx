@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import audio from "../assets/images/audio.png";
 import audioActive from "../assets/images/audio-active.png";
 import "../styles/LetterDetailCard.css";
 import useAudioPlayer from "../hooks/useLetterAudio";
+
+// 타이핑 효과 컴포넌트
+const TypingText = ({ text = "", speed = 80 }) => {
+  const [display, setDisplay] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setDisplay(""); // 텍스트 초기화
+    setIndex(0);
+  }, [text]);
+
+  useEffect(() => {
+    if (!text || index >= text.length) return;
+
+    const timer = setTimeout(() => {
+      setDisplay(prev => prev + text[index]);
+      setIndex(prev => prev + 1);
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [index, text, speed]);
+
+  return <span>{display}</span>;
+};
 
 const LetterDetailCard = ({
   letter,
@@ -133,9 +157,13 @@ const LetterDetailCard = ({
               textAlign: "center",
             }}
           >
-            {isSky && isReplyLoading
-              ? "AI 답장을 생성 중입니다..."
-              : reply}
+            {isSky && isReplyLoading ? (
+              "당신의 편지를 읽고 있어요..."
+            ) : reply ? (
+              <TypingText text={reply} />
+            ) : (
+              "답장 없음"
+            )}
           </div>
           {replyAudio && (
             <audio controls src={replyAudio} style={{ width: "100%", maxWidth: 400, margin: "0 auto" }} />
