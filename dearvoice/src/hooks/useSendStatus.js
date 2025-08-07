@@ -7,8 +7,10 @@ export const useSendStatus = () => {
   const handleSend = async (sendFunction) => {
     setIsSending(true);
     try {
-      await sendFunction();
-      setIsSent(true); // 모달 뜸 - 자동으로 사라지지 않음
+      const result = await sendFunction();
+      if (result !== false) {
+        setIsSent(true);
+      }
     } catch (err) {
       console.error("전송 실패", err);
     } finally {

@@ -7,7 +7,8 @@ export const useAudioRecorder = () => {
   const [recordedBlob, setRecordedBlob] = useState(null);
 
   const handleRecordClick = async () => {
-    if (isRecorded) return;
+    if (isRecorded && !isRecording) return; // 녹음 완료 후에 녹음 중이 아니면 무시
+    // 즉, 녹음 중일 때는 중단 가능하게
 
     if (!isRecording) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -16,7 +17,7 @@ export const useAudioRecorder = () => {
 
       recorder.ondataavailable = (e) => chunks.push(e.data);
       recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
+        const blob = new Blob(chunks, { type: "audio/wev" }); // 기존대로 .wev 유지하세요
         setRecordedBlob(blob);
         setIsRecording(false);
         setIsRecorded(true);
@@ -30,10 +31,22 @@ export const useAudioRecorder = () => {
     }
   };
 
+  // resetRecorder에서 녹음 중이면 종료시키도록
+  const resetRecorder = () => {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop(); // 녹음 중이면 종료
+    }
+    setIsRecording(false);
+    setIsRecorded(false);
+    setMediaRecorder(null);
+    setRecordedBlob(null);
+  };
+
   return {
     isRecording,
     isRecorded,
     recordedBlob,
     handleRecordClick,
+    resetRecorder,
   };
 };

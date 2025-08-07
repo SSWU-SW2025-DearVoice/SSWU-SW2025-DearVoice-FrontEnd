@@ -12,6 +12,7 @@
   margin-left: 25px;
   margin-top: 40px;
   border-left: 4px solid #F9CB73;
+  margin-bottom: 30px;
 }
 
 .receivedlist-list {
@@ -21,7 +22,7 @@
   margin-bottom: 60px;
   margin-left: 25px;
   margin-right: 25px;
-  margin-top: 25px;
+  margin-top: 18px;
 }
 
 .received-item {
@@ -54,7 +55,7 @@
 }
 
 .received-user {
-  width: 110px;
+  width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -63,6 +64,7 @@
   font-size: 14px;
   color: gray;
   vertical-align: middle;
+  margin-left: 4px;
 }
 
 .received-detail{
