@@ -6,7 +6,7 @@ import letterlogo from "../assets/images/letter-before.png";
 
 const Signup = () => {
   const [form, setForm] = useState({
-    name: "",
+    nickname: "", // name → nickname으로 변경
     email: "",
     user_id: "",
     password: "",
@@ -159,7 +159,7 @@ const Signup = () => {
     idCheck.status === "success" &&
     passwordLengthCheck.status === "success" &&
     passwordCheck.status === "success" &&
-    form.name.trim() !== "";
+    form.nickname.trim() !== ""; // name → nickname
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -198,8 +198,8 @@ const Signup = () => {
               <span className="field-label-name">이름ㅣ</span>
               <input
                 type="text"
-                name="name"
-                value={form.name}
+                name="nickname"
+                value={form.nickname}
                 onChange={handleChange}
               />
             </div>

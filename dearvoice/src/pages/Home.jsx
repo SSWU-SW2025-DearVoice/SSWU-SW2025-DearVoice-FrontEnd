@@ -22,7 +22,7 @@ const Home = () => {
         });
 
         // console.log("/users/me/ 응답:", response.data);
-        setUserId(response.data.user_id); // ✅ nickname → user_id
+        setUserId(response.data.nickname); // ✅ nickname → user_id
       } catch (error) {
         console.error("유저 정보 불러오기 실패:", error);
       }
