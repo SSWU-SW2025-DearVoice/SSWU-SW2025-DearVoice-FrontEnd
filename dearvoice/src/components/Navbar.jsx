@@ -12,7 +12,7 @@ const NavBar = ({ onClose }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken"); // 토큰 제거
-    navigate("/login"); // 로그인 페이지로 이동
+    navigate("/");
     if (onClose) onClose();
   };
 
