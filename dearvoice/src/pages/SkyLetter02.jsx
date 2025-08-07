@@ -367,21 +367,12 @@ const SkyLetter02 = () => {
             <div className="modal-content">
               <img className="lettercomplete" src={sending03} alt="전송 완료" />
               <h3>답장이 도착했어요!</h3>
-              {/* 답장 내용 표시 */}
-              <div className="reply-text-box">
-                <span className="reply-label">AI 답장:</span>
-                <span className="reply-value">
-                  {response.data?.reply_text
-                    ? response.data.reply_text
-                    : "답장이 아직 준비 중입니다."}
-                </span>
               </div>
               <button className="modal-button" onClick={handleReplyClick}>
                 답장 보러가기
               </button>
             </div>
           </div>
-        </div>
       )}
     </>
   );

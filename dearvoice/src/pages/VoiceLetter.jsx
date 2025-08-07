@@ -253,7 +253,7 @@ const VoiceLetter = () => {
           <span className="letterdetail-input">
             <input
               type="email"
-              placeholder="받는 사람 이메일 주소"
+              placeholder="받는 사람 아이디 또는 이메일"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
               required

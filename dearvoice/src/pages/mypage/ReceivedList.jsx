@@ -108,11 +108,11 @@ const ReceivedList = () => {
                       ? (
                           item.reply_text && item.reply_text.trim() !== ""
                             ? item.reply_text.replace(/^"(.*)"$/, '$1').slice(0, 15)
-                            : "AI 답장 없음"
+                            : "답장이 없어요"
                         )
                       : (
                           item.title && item.title.trim() !== ""
-                            ? item.title.slice(0, 15)
+                            ? item.title.slice(0, 20)
                             : "제목 없음"
                         )
                     } ]

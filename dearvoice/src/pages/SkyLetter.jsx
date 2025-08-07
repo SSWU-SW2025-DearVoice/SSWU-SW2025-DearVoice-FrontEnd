@@ -85,7 +85,7 @@ const SkyLetter = () => {
           <span className="letterdetail-label">분류ㅣ</span>
           <input
             type="text"
-            placeholder="사람"
+            placeholder="강아지"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           />
