@@ -5,12 +5,20 @@ import letterbefore from '../assets/images/letter-before.png';
 import letterafter from '../assets/images/letter-after.png';
 import loginlogo from '../assets/images/loginlogo.png';
 import signuplogo from '../assets/images/signuplogo.png';
+import googlelogo from '../assets/images/google.png';
 import axiosInstance from "../apis/axios";
 
 function Intro() {
   const [showBefore, setShowBefore] = useState(true);
   const [googleReady, setGoogleReady] = useState(false);
   const navigate = useNavigate();
+
+    useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBefore(prev => !prev);
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
 
   // 구글 로그인 초기화는 한 번만
   useEffect(() => {
@@ -93,8 +101,8 @@ function Intro() {
             onClick={handleGoogleLogin}
             disabled={!googleReady}
           >
-            <img src={signuplogo} alt="google-login" className="intro-google-btn" />
-            <div className="btn-text">구글 로그인</div>
+            <img src={googlelogo} alt="google-login" className="intro-google-btn" />
+            <div className="btn-text">구글로 시작하기</div>
           </button>
         </div>
       </div>

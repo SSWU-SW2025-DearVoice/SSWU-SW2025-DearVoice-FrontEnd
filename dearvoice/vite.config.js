@@ -12,6 +12,10 @@ export default defineConfig({
       },
     },
     port: 5173,
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+    },
     historyApiFallback: true,
   },
 })
