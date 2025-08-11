@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 const VoiceLetter = () => {
   const [recipient, setRecipient] = useState("");
   const [title, setTitle] = useState("");
-  const [selectedColor, setSelectedColor] = useState("pink");
+  const [selectedColor, setSelectedColor] = useState("gray");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [transcript, setTranscript] = useState("");
@@ -52,7 +52,7 @@ const VoiceLetter = () => {
   const handleGoHome = () => {
     // 폼 초기화
     setRecipient("");
-    setSelectedColor("pink");
+    setSelectedColor("gray");
     setDate("");
     setTime("");
     setTranscript("");
@@ -274,7 +274,7 @@ const VoiceLetter = () => {
         <div className="letterdetail-row">
           <span className="letterdetail-label">편지지 색상ㅣ</span>
           <div className="color-options">
-            {["pink", "yellow", "green", "blue", "gray"].map((color) => (
+            {["gray", "pink", "yellow", "green", "blue"].map((color) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
@@ -313,7 +313,12 @@ const VoiceLetter = () => {
         </div>
 
         <div className="letterdetail-row date-time-row">
-          <span className="letterdetail-label">시간 설정ㅣ</span>
+          <div className="datetime-set">
+            <span className="letterdetail-label">시간 설정ㅣ</span>
+            <button className="setNowButton" onClick={setNow}>
+              현재 시각으로
+            </button>
+          </div>
           <div className="datetime-inputs">
             <input
               type="date"
@@ -328,17 +333,30 @@ const VoiceLetter = () => {
               required
             />
           </div>
-          <div className="datetime-button">
-            <button onClick={setNow}>현재 시각으로 설정하기</button>
-          </div>
         </div>
-
-        {recordedBlob && (
-          <audio
-            controls
-            src={URL.createObjectURL(recordedBlob)}
-            className="custom-audio"
-          />
+        {isRecorded && (
+          <div className="letterdetail-row date-time-row">
+            <div className="recordResult">
+              <span className="letterdetail-label">녹음 결과ㅣ</span>
+              <button
+                onClick={() => {
+                  resetRecorder();
+                  setUploadedUrl(null);
+                  setTranscript("");
+                }}
+                className="reRecordButton"
+              >
+                재녹음
+              </button>
+            </div>
+            {recordedBlob && (
+              <audio
+                controls
+                src={URL.createObjectURL(recordedBlob)}
+                className="custom-audio"
+              />
+            )}
+          </div>
         )}
 
         <div className="letterdetail-audio">
@@ -360,20 +378,6 @@ const VoiceLetter = () => {
             />
           </button>
         </div>
-        {isRecorded && (
-          <div className="letterdetail-row" style={{ marginTop: "10px" }}>
-            <button
-              onClick={() => {
-                resetRecorder();
-                setUploadedUrl(null); // 재녹음 시작할 때 기존 URL 초기화
-                setTranscript(""); // 기존 텍스트 초기화(필요시)
-              }}
-              className="reRecordButton"
-            >
-              🔁 다시 녹음하기
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="bottomButton">

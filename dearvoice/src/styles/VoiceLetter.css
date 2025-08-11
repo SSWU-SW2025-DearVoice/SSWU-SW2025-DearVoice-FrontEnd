@@ -63,19 +63,25 @@
   gap: 12px;
 }
 
+.datetime-set {
+  display: flex;
+  align-items: center;
+  margin-left: -104px;
+}
+
 .datetime-inputs {
   display: flex;
   gap: 30px;
 }
 
-.datetime-button button {
-  padding: 3px 3px;
+.setNowButton,
+.reRecordButton {
+  padding: 3px 8px;
   font-size: 12px;
   border-radius: 6px;
-  border: none;
+  border: #b3b3b3;
   background-color: #f9cb73;
-  color: black;
-  white-space: nowrap;
+  color: #3b2f2f;
   cursor: pointer;
 }
 
@@ -83,6 +89,10 @@
 .date-time-row input[type="time"] {
   border: none;
   background-color: #ffffff;
+}
+
+.recordResult {
+  margin-left: -140px;
 }
 
 .bottomButton {
@@ -229,7 +239,7 @@
   border-radius: 10px;
 }
 
-.letterdetail-text{
+.letterdetail-text {
   padding: 0;
   overflow: visible;
   max-height: none;
@@ -245,9 +255,9 @@
   resize: none;
   outline: none;
   padding: 0px;
-  color: #3B2F2F;
+  color: #3b2f2f;
   font-family: inherit;
   overflow-y: auto;
   box-sizing: border-box;
-  scrollbar-width: thin;   
+  scrollbar-width: thin;
 }
