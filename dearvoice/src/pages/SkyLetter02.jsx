@@ -275,7 +275,12 @@ const SkyLetter02 = () => {
         </div>
 
         <div className="letterdetail-row date-time-row">
-          <span className="letterdetail-label">시간 설정ㅣ</span>
+          <div className="datetime-set">
+            <span className="letterdetail-label">시간 설정ㅣ</span>
+            <button className="setNowButton" onClick={setNow}>
+              현재 시각으로
+            </button>
+          </div>
           <div className="datetime-inputs">
             <input
               type="date"
@@ -290,17 +295,30 @@ const SkyLetter02 = () => {
               required
             />
           </div>
-          <div className="datetime-button">
-            <button onClick={setNow}>현재 시각으로 설정하기</button>
-          </div>
         </div>
-
-        {recordedBlob && (
-          <audio
-            controls
-            src={URL.createObjectURL(recordedBlob)}
-            className="custom-audio"
-          />
+        {isRecorded && (
+          <div className="letterdetail-row date-time-row">
+            <div className="recordResult">
+              <span className="letterdetail-label">녹음 결과ㅣ</span>
+              <button
+                onClick={() => {
+                  resetRecorder();
+                  setUploadedUrl(null);
+                  setTranscript("");
+                }}
+                className="reRecordButton"
+              >
+                재녹음
+              </button>
+            </div>
+            {recordedBlob && (
+              <audio
+                controls
+                src={URL.createObjectURL(recordedBlob)}
+                className="custom-audio"
+              />
+            )}
+          </div>
         )}
 
         <div className="letterdetail-audio">
@@ -323,20 +341,6 @@ const SkyLetter02 = () => {
           </button>
         </div>
       </div>
-      {isRecorded && (
-        <div className="letterdetail-row" style={{ marginTop: "10px" }}>
-          <button
-            onClick={() => {
-              resetRecorder();
-              setUploadedUrl(null); // 재녹음 시작할 때 기존 URL 초기화
-              setTranscript(""); // 기존 텍스트 초기화(필요시)
-            }}
-            className="reRecordButton"
-          >
-            🔁 다시 녹음하기
-          </button>
-        </div>
-      )}
 
       <div className="bottomButton">
         <button
@@ -367,12 +371,12 @@ const SkyLetter02 = () => {
             <div className="modal-content">
               <img className="lettercomplete" src={sending03} alt="전송 완료" />
               <h3>답장이 도착했어요!</h3>
-              </div>
-              <button className="modal-button" onClick={handleReplyClick}>
-                답장 보러가기
-              </button>
             </div>
+            <button className="modal-button" onClick={handleReplyClick}>
+              답장 보러가기
+            </button>
           </div>
+        </div>
       )}
     </>
   );
