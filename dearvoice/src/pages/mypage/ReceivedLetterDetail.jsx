@@ -27,12 +27,11 @@ function ReceivedLetterDetail() {
         });
         setLetter(res.data);
 
-        // 하늘편지이고 답장이 없으면 폴링 시작
         if (isSkyLetter && !res.data.reply_text && !pollingRef.current) {
           setIsReplyLoading(true);
           pollingRef.current = setInterval(fetchLetter, 2000);
         }
-        // 답장이 오면 폴링 종료
+        // 답장 오면 폴링 종료
         if (isSkyLetter && res.data.reply_text && pollingRef.current) {
           setIsReplyLoading(false);
           clearInterval(pollingRef.current);
@@ -49,7 +48,6 @@ function ReceivedLetterDetail() {
     };
   }, [id, isSkyLetter]);
 
-  // 일반 편지만 읽음 처리
   useEffect(() => {
     if (!letter || isSkyLetter) return;
 

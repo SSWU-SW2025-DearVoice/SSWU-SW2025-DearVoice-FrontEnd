@@ -20,7 +20,6 @@ function Intro() {
     return () => clearInterval(interval);
   }, []);
 
-  // 구글 로그인 초기화는 한 번만
   useEffect(() => {
     const timer = setInterval(() => {
       if (window.google && window.google.accounts && window.google.accounts.id) {
@@ -52,7 +51,6 @@ function Intro() {
     return () => clearInterval(timer);
   }, [navigate]);
 
-  // 구글 로그인 버튼 클릭 시 prompt만 호출
   const handleGoogleLogin = useCallback(() => {
     if (!window.google || !window.google.accounts || !window.google.accounts.id) {
       alert("구글 로그인 준비 중입니다. 잠시 후 다시 시도해주세요.");

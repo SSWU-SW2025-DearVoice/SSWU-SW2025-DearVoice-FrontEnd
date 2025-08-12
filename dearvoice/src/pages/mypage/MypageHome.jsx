@@ -71,7 +71,6 @@ const MypageHome = () => {
         </button>
         <button className="mypage-received"
         onClick={() => navigate("/mypage/received")} >
-          <div className="circle"></div>
           <img src={receivedimg} className='receivedimg' alt="받은 편지함"/>
           <div className="received-text">받은 편지함</div>
         </button>
@@ -80,15 +79,7 @@ const MypageHome = () => {
       <div className="mypage-signout">
         <button
           onClick={handleDeleteAccount}
-          style={{
-            backgroundColor: "transparent",
-            border: "1px solid red",
-            color: "red",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontSize: "14px"
-          }}
+          className="delete-account-btn"
         >
           회원 탈퇴
         </button>

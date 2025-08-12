@@ -4,7 +4,7 @@ import slide1 from "../assets/images/letter-before.png";
 import slide2 from "../assets/images/letter-heart.png";
 import slide3 from "../assets/images/letter-after.png";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; //라이브러리 설치 필요!
+import { motion, AnimatePresence } from "framer-motion";
 
 
 const slides = [

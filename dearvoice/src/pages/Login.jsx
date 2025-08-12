@@ -10,7 +10,7 @@ const Login = () => {
   });
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // "error"만 사용
+  const [modalType, setModalType] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -44,7 +44,6 @@ const Login = () => {
 
   const handleModalConfirm = () => {
     setShowModal(false);
-    // 실패 모달 확인 후 현재 페이지에 머물기
   };
 
   const handleSignupClick = () => {

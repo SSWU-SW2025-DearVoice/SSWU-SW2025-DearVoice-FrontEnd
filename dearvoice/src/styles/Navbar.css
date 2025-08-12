@@ -28,7 +28,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 2000; /*냅바가 이미지나 다른 요소들보다 항상 위에 올라오게*/
+  z-index: 2000;
 }
 
 .nablist li {

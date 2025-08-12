@@ -48,19 +48,9 @@
     cursor: pointer;
 }
 
-.circle{
-    background-color: gray;
-    width: 15px;
-    height: 15px;
-    border-radius: 100%;
-    margin-left: 120px;
-    margin-top: 20px;
-
-}
-
 .receivedimg{
     width: 102px;
-    margin-top: 24px;
+    margin-top: 58px;
 }
 
 .received-text{
@@ -85,4 +75,21 @@
     display: flex;
     align-items: center;
     justify-content: center;;
+}
+
+.delete-account-btn {
+  background-color: transparent;
+  border: 2px solid rgb(224, 202, 159);
+  color: #dfc490ff;
+  padding: 6px 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.delete-account-btn:hover {
+  background-color: rgb(233, 208, 162);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }

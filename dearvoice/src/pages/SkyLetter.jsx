@@ -5,7 +5,7 @@ import "../styles/SkyLetter.css";
 
 const SkyLetter = () => {
   const [name, setName] = useState("");
-  const [gender, setGender] = useState(""); // 성별
+  const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [category, setCategory] = useState("");
   const [selectedColor, setSelectedColor] = useState("gray");

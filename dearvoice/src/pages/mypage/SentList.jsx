@@ -21,11 +21,10 @@ const SentList = () => {
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [search, setSearch] = useState(""); // 검색어 상태
-  const [searchInput, setSearchInput] = useState(""); // 입력창 상태
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const navigate = useNavigate();
 
-  // 백엔드에서 전체 리스트 불러오기
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     axiosInstance.get(`/api/mypage/sent/`, {
@@ -40,7 +39,6 @@ const SentList = () => {
     .catch(err => console.error('보낸 편지 불러오기 실패', err));
   }, []);
 
-  // recipientValue 기준으로 검색
   const safeLetters = Array.isArray(letters) ? letters : [];
   const filteredLetters = safeLetters.filter(item => {
     if (!search.trim()) return true;
@@ -53,13 +51,11 @@ const SentList = () => {
     return recipientValue.includes(search.trim());
   });
 
-  // 페이지네이션
   const totalPages = Math.ceil(filteredLetters.length / ITEMS_PER_PAGE);
   const currentGroup = Math.ceil(page / MAX_PAGE_BUTTONS);
   const groupStart = (currentGroup - 1) * MAX_PAGE_BUTTONS + 1;
   const groupEnd = Math.min(groupStart + MAX_PAGE_BUTTONS - 1, totalPages);
 
-  // slice로 페이지 분할
   const currentLetters = filteredLetters.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
@@ -68,10 +64,9 @@ const SentList = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(searchInput);
-    setPage(1); // 검색 시 1페이지로 이동
+    setPage(1);
   };
 
-  /* 편지 삭제 */
   const handleDelete = async (letterId, letterType) => {
     const confirmed = window.confirm("정말 이 편지를 삭제하시겠습니까?");
     if (!confirmed) return;

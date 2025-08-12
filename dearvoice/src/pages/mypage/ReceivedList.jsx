@@ -22,10 +22,10 @@ const ReceivedList = () => {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
-  const [search, setSearch] = useState(""); // 검색어 상태
-  const [searchInput, setSearchInput] = useState(""); // 입력창 상태
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
-  // 백엔드에서 전체 리스트 불러오기
+  //전체 리스트 불러옴
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     axiosInstance.get(`/api/mypage/received/`, {
@@ -53,7 +53,6 @@ const ReceivedList = () => {
     return recipientValue.includes(search.trim());
   });
 
-  // slice로 페이지 분할
   const currentLetters = filteredLetters.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
@@ -77,7 +76,7 @@ const ReceivedList = () => {
         <div className="sentlist-searchbar-inner">
           <input
             type="text"
-            placeholder="수신인 검색"
+            placeholder="발신인 검색"
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
             className="sentlist-search-input"

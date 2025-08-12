@@ -1,5 +1,4 @@
 import '../styles/Navbar.css';
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const NavBar = ({ onClose }) => {
@@ -11,7 +10,7 @@ const NavBar = ({ onClose }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken"); // 토큰 제거
+    localStorage.removeItem("accessToken");
     navigate("/");
     if (onClose) onClose();
   };

@@ -11,7 +11,7 @@ const FindPassword = () => {
   });
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // "success" 또는 "error"
+  const [modalType, setModalType] = useState("");
   const navigate = useNavigate();
 
   const handleChange = e => {

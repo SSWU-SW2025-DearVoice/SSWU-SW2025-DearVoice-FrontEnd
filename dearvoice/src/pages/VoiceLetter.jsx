@@ -41,33 +41,26 @@ const VoiceLetter = () => {
 
   const textareaRef = useRef(null);
 
-  // 편지 생성 완료 시 모달 표시
   useEffect(() => {
     if (isSent) {
       setShowModal(true);
     }
   }, [isSent]);
 
-  // 홈으로 이동 함수
   const handleGoHome = () => {
-    // 폼 초기화
     setRecipient("");
     setSelectedColor("gray");
     setDate("");
     setTime("");
     setTranscript("");
 
-    // 전송 상태 초기화
-    resetStatus(); // 또는 setIsSent(false)
+    resetStatus();
 
-    // 모달 닫기
     setShowModal(false);
 
-    // 홈으로 이동
     navigate("/home");
   };
 
-  // ESC 키로 모달 닫기 방지
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && showModal) {
@@ -94,7 +87,6 @@ const VoiceLetter = () => {
     setTime(`${hh}:${min}`);
   };
 
-  // 음성을 텍스트로 변환하는 함수
   const uploadToS3 = async (fileBlob) => {
     const accessToken = localStorage.getItem("accessToken");
 
@@ -102,7 +94,7 @@ const VoiceLetter = () => {
     formData.append("file", fileBlob, "recording.wev");
 
     const response = await axiosInstance.post(
-      "/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      "/api/letters/upload/",
       formData,
       {
         headers: {
@@ -112,7 +104,7 @@ const VoiceLetter = () => {
       }
     );
 
-    return response.data.url; // 실제 S3 URL
+    return response.data.url;
   };
 
   const transcribeAudio = async () => {
@@ -126,14 +118,11 @@ const VoiceLetter = () => {
 
     setIsTranscribing(true);
     try {
-      // 1. S3에 업로드
-      // const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 이미 업로드된 URL 있으면 재사용
       const s3Url = await uploadToS3(recordedBlob);
-      setUploadedUrl(s3Url); //한 번만 저장
+      setUploadedUrl(s3Url);
 
-      console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
+      console.log("S3 업로드 완료:", s3Url);
 
-      // 2. audio_url을 JSON으로 전송
       const response = await axiosInstance.post(
         "/api/letters/transcribe/",
         { audio_url: s3Url },
@@ -159,7 +148,6 @@ const VoiceLetter = () => {
     }
   };
 
-  // 녹음 완료 시 자동 변환
   useEffect(() => {
     if (isRecorded && recordedBlob) {
       transcribeAudio();
@@ -168,7 +156,6 @@ const VoiceLetter = () => {
 
   const isFormComplete = recipient && date && time && isRecorded;
 
-  // 편지 생성
 
   console.log("transcript:", transcript);
   console.log("uploadedUrl:", uploadedUrl);
@@ -178,15 +165,14 @@ const VoiceLetter = () => {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       navigate("/login");
-      return false; // 실패 시 false 반환
+      return false;
     }
 
-    // try 밖에 payload 선언용 변수 미리 선언 (초기값은 빈 객체)
     let payload = {};
 
     try {
-      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 재사용
-      setUploadedUrl(s3Url); // 혹시 없었으면 저장
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob));
+      setUploadedUrl(s3Url); 
 
       const payload = {
         recipients: [{ email: recipient }],
@@ -197,7 +183,7 @@ const VoiceLetter = () => {
         title: title,
       };
 
-      console.log("📤 최종 payload:", payload);
+      console.log("최종 payload:", payload);
 
       const response = await axiosInstance.post(
         "/api/letters/create/",
@@ -211,7 +197,7 @@ const VoiceLetter = () => {
       );
 
       if (response.status === 201) {
-        setIsSent(true); // 성공 시 모달 표시
+        setIsSent(true);
         return true;
       } else {
         alert("편지 전송 실패: 알 수 없는 오류");
@@ -236,7 +222,7 @@ const VoiceLetter = () => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = "auto";
-      const maxHeight = 60; // 3줄 높이(px), 필요시 조정
+      const maxHeight = 60;
       textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
     }
   }, [transcript]);
@@ -303,8 +289,8 @@ const VoiceLetter = () => {
                 rows={1}
                 style={{
                   overflowY: "auto",
-                  maxHeight: "60px", // 3줄 높이
-                  minHeight: "20px", // 1줄 높이
+                  maxHeight: "60px",
+                  minHeight: "20px",
                   height: "auto",
                 }}
               />
@@ -337,7 +323,7 @@ const VoiceLetter = () => {
         {isRecorded && (
           <div className="letterdetail-row date-time-row">
             <div className="recordResult">
-              <span className="letterdetail-label">녹음 결과ㅣ</span>
+              <span className="letterdetail-label">녹음 듣기ㅣ</span>
               <button
                 onClick={() => {
                   resetRecorder();
@@ -363,7 +349,6 @@ const VoiceLetter = () => {
           <button
             className="letterdetail-play"
             onClick={handleRecordClick}
-            // disabled={isRecorded}
           >
             <img
               src={
@@ -406,11 +391,11 @@ const VoiceLetter = () => {
       {showModal && isSent && (
         <div
           className="modal-overlay"
-          onClick={(e) => e.stopPropagation()} // 배경 클릭 방지
+          onClick={(e) => e.stopPropagation()}
         >
           <div
             className="modal-box"
-            onClick={(e) => e.stopPropagation()} // 모달 클릭 시 이벤트 전파 방지
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-content">
               <img

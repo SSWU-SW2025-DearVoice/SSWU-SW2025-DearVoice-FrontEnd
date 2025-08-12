@@ -142,7 +142,7 @@ const LetterDetailCard = ({
             <span className="letterdetail-reply-label" style={{ fontWeight: 700, fontSize: "2rem" }}>
               ☁️💬
             </span>
-            <span className="letterdetail-reply-label-text" style={{ fontWeight: 300, fontSize: "1rem" }}>
+            <span className="letterdetail-reply-label-text" style={{ color: "#3B2F2F", fontWeight: 300, fontSize: "1rem" }}>
               답장
             </span>
           </div>
@@ -151,8 +151,8 @@ const LetterDetailCard = ({
             style={{
               fontSize: "1.2rem",
               fontWeight: 400,
-              color: "#222",
-              marginBottom: replyAudio ? "1rem" : 0,
+              color: "#3b2f2fe1",
+              marginBottom: replyAudio ? "1.5rem" : 0,
               wordBreak: "break-all",
               textAlign: "center",
             }}
