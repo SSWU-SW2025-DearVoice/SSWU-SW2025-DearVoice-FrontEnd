@@ -6,11 +6,11 @@
 .header-container{
     display: flex;
     justify-content: space-between;
-    padding: 30px 18px;
+    padding: 25px 18px;
 }
 
 .logotext {
-    width: 170px;
+    width: 180px;
     cursor: pointer;
 }
 

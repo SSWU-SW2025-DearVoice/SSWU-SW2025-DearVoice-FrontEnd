@@ -116,8 +116,8 @@ const NavBar = ({ onClose }) => {
                     alertModal.message === "회원 탈퇴가 완료되었습니다."
                       ? "#2e7d32"
                       : "#d32f2f",
-                  fontWeight: 600,
-                  fontSize: "1.1rem"
+                  fontWeight: 700,
+                  fontSize: "1.3rem"
                 }}
               >
                 {alertModal.message}
