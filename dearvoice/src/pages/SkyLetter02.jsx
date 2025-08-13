@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/axios";
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
@@ -65,12 +66,11 @@ const SkyLetter02 = () => {
     return () => clearInterval(interval);
   }, [isSending, isSent]);
 
-  // textarea 높이 자동 조절 (1~3줄)
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = "auto";
-      const maxHeight = 60; // 3줄 높이(px)
+      const maxHeight = 60;
       textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
     }
   }, [transcript]);
@@ -92,17 +92,14 @@ const SkyLetter02 = () => {
   };
 
   const uploadToS3 = async (fileBlob) => {
-    const accessToken = localStorage.getItem("accessToken");
-
     const formData = new FormData();
-    formData.append("file", fileBlob, "recording.wev");
+    formData.append("file", fileBlob, "recording.wav");
 
     const response = await axiosInstance.post(
-      "/api/letters/upload/", // 백엔드 S3 업로드 엔드포인트
+      "/api/letters/upload/",
       formData,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       }
@@ -113,9 +110,7 @@ const SkyLetter02 = () => {
 
   const transcribeAudio = async () => {
     if (!recordedBlob) return;
-
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+    if (!authStorage.isLoggedIn()) {
       navigate("/login");
       return;
     }
@@ -123,9 +118,9 @@ const SkyLetter02 = () => {
     setIsTranscribing(true);
     try {
       // 1. S3에 업로드
-      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 이미 업로드된 URL 있으면 재사용
-      setUploadedUrl(s3Url); //한 번만 저장
-      console.log("S3 업로드 완료:", s3Url); // 🔍 디버깅용 출력
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob));
+      setUploadedUrl(s3Url);
+      console.log("S3 업로드 완료:", s3Url);
 
       // 2. audio_url을 JSON으로 전송
       const response = await axiosInstance.post(
@@ -133,7 +128,6 @@ const SkyLetter02 = () => {
         { audio_url: s3Url },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -160,15 +154,14 @@ const SkyLetter02 = () => {
   }, [isRecorded, recordedBlob]);
 
   const sendSkyLetter = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+    if (!authStorage.isLoggedIn()) {
       navigate("/login");
       return;
     }
 
     try {
-      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob)); // 재사용
-      setUploadedUrl(s3Url); // 혹시 없었으면 저장
+      const s3Url = uploadedUrl || (await uploadToS3(recordedBlob));
+      setUploadedUrl(s3Url);
 
       const payload = {
         receiver_name: name,
@@ -178,27 +171,21 @@ const SkyLetter02 = () => {
         color: selectedColor,
         title,
         scheduled_at: `${date}T${time}:00`,
-        audio_url: s3Url, // S3 업로드 후 받은 URL
-        content_text: transcript, // 텍스트 변환 결과
-        // 기타 필요한 필드
+        audio_url: s3Url,
+        content_text: transcript,
       };
 
       const response = await axiosInstance.post("/skyvoice/letters/", payload, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
-
-      // if (response.data && response.data.transcript) {
-      //   setTranscript(response.data.transcript);
-      // }
 
       if (response.data && response.data.id) {
         setLetterId(response.data.id);
       }
 
-      setResponse(response.data); // AI의 답장 내용 저장
+      setResponse(response.data);
       setShowModal(true);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -299,7 +286,7 @@ const SkyLetter02 = () => {
         {isRecorded && (
           <div className="letterdetail-row date-time-row">
             <div className="recordResult">
-              <span className="letterdetail-label">녹음 결과ㅣ</span>
+              <span className="letterdetail-label">녹음 듣기ㅣ</span>
               <button
                 onClick={() => {
                   resetRecorder();
@@ -325,7 +312,6 @@ const SkyLetter02 = () => {
           <button
             className="letterdetail-play"
             onClick={handleRecordClick}
-            // disabled={isRecorded}
           >
             <img
               src={
@@ -358,7 +344,7 @@ const SkyLetter02 = () => {
           <div className="modal-box">
             <div className="modal-content">
               <img className="letterbefore" src={blinkImage} alt="전송 중" />
-              <h3>음성 편지 전송 중</h3>
+              <h3>하늘 편지 전송 중</h3>
             </div>
           </div>
         </div>

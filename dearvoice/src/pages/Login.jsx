@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -10,7 +11,7 @@ const Login = () => {
   });
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // "error"만 사용
+  const [modalType, setModalType] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,15 +29,14 @@ const Login = () => {
     }
 
     try {
-    const response = await axiosInstance.post("/api/auth/login/", form, {
-      headers: { "Content-Type": "application/json" }
-    });
+      const response = await axiosInstance.post("/api/auth/login/", form, {
+        headers: { "Content-Type": "application/json" }
+      });
+      authStorage.setTokens(response.data.access, response.data.refresh);
 
-    localStorage.setItem("accessToken", response.data.access);
-    localStorage.setItem("refreshToken", response.data.refresh);
-
-    navigate("/home");
+      navigate("/home");
     } catch (err) {
+      console.error("로그인 에러:", err);
       setModalType("error");
       setShowModal(true);
     }
@@ -44,7 +44,6 @@ const Login = () => {
 
   const handleModalConfirm = () => {
     setShowModal(false);
-    // 실패 모달 확인 후 현재 페이지에 머물기
   };
 
   const handleSignupClick = () => {

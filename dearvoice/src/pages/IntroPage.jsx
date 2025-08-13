@@ -3,24 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/IntroPage.css';
 import letterbefore from '../assets/images/letter-before.png';
 import letterafter from '../assets/images/letter-after.png';
-import loginlogo from '../assets/images/loginlogo.png';
-import signuplogo from '../assets/images/signuplogo.png';
-import googlelogo from '../assets/images/google.png';
-import axiosInstance from "../apis/axios";
+import loginlogo from '../assets/icons/loginlogo.svg';
+import signuplogo from '../assets/icons/signuplogo.svg';
+import googlelogo from '../assets/icons/google.svg';
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 
 function Intro() {
   const [showBefore, setShowBefore] = useState(true);
   const [googleReady, setGoogleReady] = useState(false);
   const navigate = useNavigate();
 
-    useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setShowBefore(prev => !prev);
     }, 1200);
     return () => clearInterval(interval);
   }, []);
 
-  // 구글 로그인 초기화는 한 번만
   useEffect(() => {
     const timer = setInterval(() => {
       if (window.google && window.google.accounts && window.google.accounts.id) {
@@ -30,13 +30,11 @@ function Intro() {
             callback: async (response) => {
               const id_token = response.credential;
               if (!id_token) {
-                alert("구글 로그인 토큰 수신 실패");
                 return;
               }
               try {
                 const res = await axiosInstance.post("/api/auth/login/google/", { id_token });
-                localStorage.setItem("accessToken", res.data.access);
-                localStorage.setItem("refreshToken", res.data.refresh);
+                authStorage.setTokens(res.data.access, res.data.refresh);
                 navigate("/home");
               } catch (err) {
                 alert("구글 로그인에 실패했습니다.");
@@ -52,7 +50,6 @@ function Intro() {
     return () => clearInterval(timer);
   }, [navigate]);
 
-  // 구글 로그인 버튼 클릭 시 prompt만 호출
   const handleGoogleLogin = useCallback(() => {
     if (!window.google || !window.google.accounts || !window.google.accounts.id) {
       alert("구글 로그인 준비 중입니다. 잠시 후 다시 시도해주세요.");
@@ -60,8 +57,6 @@ function Intro() {
     }
     window.google.accounts.id.prompt();
   }, []);
-  console.log("GOOGLE CLIENT ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  console.log("현재 Origin:", window.location.origin);
 
   return (
     <div className="mobile-wrapper">

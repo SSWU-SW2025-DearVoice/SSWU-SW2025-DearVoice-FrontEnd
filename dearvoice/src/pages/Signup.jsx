@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 import "../styles/Signup.css";
 import letterlogo from "../assets/images/letter-before.png";
 
 const Signup = () => {
   const [form, setForm] = useState({
-    nickname: "", // name → nickname으로 변경
+    nickname: "",
     email: "",
     user_id: "",
     password: "",
@@ -29,12 +30,10 @@ const Signup = () => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    // 중복 확인 메시지는 입력 변경 시 초기화하는게 좋음
     if (e.target.name === "email") setEmailCheck({ status: "", message: "" });
     if (e.target.name === "user_id") setIdCheck({ status: "", message: "" });
   };
 
-  // 비밀번호 길이 검증
   useEffect(() => {
     if (form.password && form.password.length > 0) {
       const timer = setTimeout(() => {
@@ -57,7 +56,6 @@ const Signup = () => {
     }
   }, [form.password]);
 
-  // 비밀번호 재확인 검증 (API 없이 클라이언트에서 처리) 디바운싱 말고 실시간 확인으로 바꾸는게 좋을까
   useEffect(() => {
     if (form.passwordConfirm) {
       const timer = setTimeout(() => {
@@ -79,7 +77,7 @@ const Signup = () => {
             message: "비밀번호 확인 중 오류가 발생했습니다.",
           });
         }
-      }, 1000); // 1초 후 확인
+      }, 1000);
 
       return () => clearTimeout(timer);
     } else {
@@ -87,7 +85,6 @@ const Signup = () => {
     }
   }, [form.password, form.passwordConfirm]);
 
-  // 아이디 중복 확인 함수 (버튼 클릭용)
   const checkUserIdDuplicate = async () => {
     if (!form.user_id) {
       setIdCheck({ status: "error", message: "아이디를 입력하세요." });
@@ -114,13 +111,11 @@ const Signup = () => {
     }
   };
 
-  // 이메일 중복 확인 함수 (버튼 클릭용)
   const checkEmailDuplicate = async () => {
     if (!form.email) {
       setEmailCheck({ status: "error", message: "이메일을 입력하세요." });
       return;
     }
-    // 이메일 형식 간단 체크
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
       setEmailCheck({
@@ -153,30 +148,25 @@ const Signup = () => {
     }
   };
 
-  // 모든 검증이 성공했는지 확인하는 계산된 값
+  // 모든 검증이 성공했는지
   const isFormValid =
     emailCheck.status === "success" &&
     idCheck.status === "success" &&
     passwordLengthCheck.status === "success" &&
     passwordCheck.status === "success" &&
-    form.nickname.trim() !== ""; // name → nickname
+    form.nickname.trim() !== "";
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
 
-    // 버튼이 비활성화 상태면 실행하지 않음
     if (!isFormValid) {
       return;
     }
 
     try {
-      // passwordConfirm 제거하고 백엔드에 전송
       const { passwordConfirm, ...signupData } = form;
-
-      await axiosInstance.post("/api/auth/signup/", signupData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axiosInstance.post("/api/auth/signup/", signupData);
       setShowModal(true);
     } catch (err) {
       setMessage("회원가입 실패: 입력값을 확인하세요.");
@@ -310,7 +300,7 @@ const Signup = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-container">
-            <img src={letterlogo}></img>
+            <img src={letterlogo} alt="편지 로고" />
             <div className="modal-content">
               <h3>회원가입 완료</h3>
               <button className="modal-btn" onClick={handleModalConfirm}>

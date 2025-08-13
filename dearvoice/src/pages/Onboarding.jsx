@@ -4,7 +4,7 @@ import slide1 from "../assets/images/letter-before.png";
 import slide2 from "../assets/images/letter-heart.png";
 import slide3 from "../assets/images/letter-after.png";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; //라이브러리 설치 필요!
+import { motion, AnimatePresence } from "framer-motion";
 
 
 const slides = [
@@ -22,8 +22,6 @@ const slides = [
   },
 ];
 
-
-
 function Onboarding() {
   const [idx, setIdx] = useState(0);
   const navigate = useNavigate();
@@ -39,7 +37,6 @@ function Onboarding() {
     <div className="mobile-wrapper">
       <div className="onboarding-container">
        <AnimatePresence mode="wait">
-          {/* 텍스트 애니메이션 */}
           <motion.div
             key={"text-" + idx}
             className="onboarding-text"
@@ -53,7 +50,6 @@ function Onboarding() {
             ))}
           </motion.div>
 
-          {/* 이미지 애니메이션 */}
           <motion.img
             key={"img-" + idx}
             src={slides[idx].img}

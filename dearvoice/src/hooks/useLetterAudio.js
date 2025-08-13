@@ -1,4 +1,3 @@
-// //mypage letterdetailcard에서 전달된 음성 듣기 로직
 import { useRef, useState } from "react";
 
 export default function useAudioPlayer(audioUrl) {

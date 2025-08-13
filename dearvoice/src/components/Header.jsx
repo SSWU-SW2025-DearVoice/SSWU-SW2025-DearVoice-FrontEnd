@@ -1,8 +1,8 @@
 import '../styles/Header.css';
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "./Navbar";
-import navbarIcon from "../assets/images/burgerbar.png";
-import logoIcon from "../assets/images/logotext.png";
+import navbarIcon from "../assets/icons/burgerbar.svg";
+import logoIcon from "../assets/icons/logotext.svg";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,11 +11,11 @@ const Header = () => {
         console.log("Logout");
         localStorage.clear();
         window.location.href = '/';
-    } // 로그아웃 함수 추가 해야 됨
+    }
 
     const handleHome = () => {
         window.location.href = '/home';
-    } // 로고 이미지 누르면 home으로 돌아감
+    }
 
   return (
     <>
@@ -33,6 +33,5 @@ const Header = () => {
     </>
   );
 };
-//isOpen이 true인 경우에만 냅바 컴포넌트 랜더링, props 두 개 전달 -> onLogout, onClose
 
 export default Header;

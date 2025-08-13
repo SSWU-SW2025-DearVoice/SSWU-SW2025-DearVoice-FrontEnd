@@ -48,19 +48,9 @@
     cursor: pointer;
 }
 
-.circle{
-    background-color: gray;
-    width: 15px;
-    height: 15px;
-    border-radius: 100%;
-    margin-left: 120px;
-    margin-top: 20px;
-
-}
-
 .receivedimg{
     width: 102px;
-    margin-top: 24px;
+    margin-top: 58px;
 }
 
 .received-text{
@@ -78,11 +68,4 @@
 
 .mypage-received:hover, .mypage-sent:hover{
     border: 4.3px solid #F9CB73;
-}
-
-.mypage-signout{
-    margin-top: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;;
 }

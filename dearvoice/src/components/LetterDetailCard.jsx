@@ -4,13 +4,12 @@ import audioActive from "../assets/images/audio-active.png";
 import "../styles/LetterDetailCard.css";
 import useAudioPlayer from "../hooks/useLetterAudio";
 
-// 타이핑 효과 컴포넌트
 const TypingText = ({ text = "", speed = 80 }) => {
   const [display, setDisplay] = useState("");
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    setDisplay(""); // 텍스트 초기화
+    setDisplay("");
     setIndex(0);
   }, [text]);
 
@@ -32,7 +31,7 @@ const LetterDetailCard = ({
   letter,
   isSender = false,
   isSky = false,
-  isReplyLoading = false, // prop 추가
+  isReplyLoading = false,
 }) => {
   const {
     isPlaying,
@@ -49,7 +48,7 @@ const LetterDetailCard = ({
   const reply = isSky ? letter.reply_text : letter.replies?.[0]?.content;
   const replyAudio = isSky ? letter.reply_voice_url : null;
 
-  // 발신자/수신자 정보 분기
+  // 발신자/수신자 분기
   let senderValue = "";
   let recipientValue = "";
 
@@ -142,7 +141,7 @@ const LetterDetailCard = ({
             <span className="letterdetail-reply-label" style={{ fontWeight: 700, fontSize: "2rem" }}>
               ☁️💬
             </span>
-            <span className="letterdetail-reply-label-text" style={{ fontWeight: 300, fontSize: "1rem" }}>
+            <span className="letterdetail-reply-label-text" style={{ color: "#3B2F2F", fontWeight: 300, fontSize: "1rem" }}>
               답장
             </span>
           </div>
@@ -151,8 +150,8 @@ const LetterDetailCard = ({
             style={{
               fontSize: "1.2rem",
               fontWeight: 400,
-              color: "#222",
-              marginBottom: replyAudio ? "1rem" : 0,
+              color: "#3b2f2fe1",
+              marginBottom: replyAudio ? "1.5rem" : 0,
               wordBreak: "break-all",
               textAlign: "center",
             }}
