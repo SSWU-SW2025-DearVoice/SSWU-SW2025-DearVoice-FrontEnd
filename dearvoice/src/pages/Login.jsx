@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -28,15 +29,14 @@ const Login = () => {
     }
 
     try {
-    const response = await axiosInstance.post("/api/auth/login/", form, {
-      headers: { "Content-Type": "application/json" }
-    });
+      const response = await axiosInstance.post("/api/auth/login/", form, {
+        headers: { "Content-Type": "application/json" }
+      });
+      authStorage.setTokens(response.data.access, response.data.refresh);
 
-    localStorage.setItem("accessToken", response.data.access);
-    localStorage.setItem("refreshToken", response.data.refresh);
-
-    navigate("/home");
+      navigate("/home");
     } catch (err) {
+      console.error("로그인 에러:", err);
       setModalType("error");
       setShowModal(true);
     }

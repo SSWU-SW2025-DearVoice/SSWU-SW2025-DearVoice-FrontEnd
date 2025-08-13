@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/ReceivedList.css";
 import arrow from "../../assets/images/arrow.png";
 import arrowstart from "../../assets/images/arrow-start.png";
-import axiosInstance from "../../apis/axios";
+import axiosInstance from "../../apis/axiosInstance";
+import { authStorage } from "../../utils/authStorage";
 import { FaSearch } from "react-icons/fa";
 
 const colorClass = {
@@ -25,32 +26,32 @@ const ReceivedList = () => {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  //전체 리스트 불러옴
+  // 전체 리스트 불러옴
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    axiosInstance.get(`/api/mypage/received/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then(res => {
-      setLetters(res.data || []);
-      setTotalCount((res.data || []).length);
-    })
-    .catch(err => console.error('받은 편지 불러오기 실패', err));
-  }, []);
+    axiosInstance.get(`/api/mypage/received/`)
+      .then(res => {
+        setLetters(res.data || []);
+        setTotalCount((res.data || []).length);
+      })
+      .catch(err => {
+        console.error('받은 편지 불러오기 실패', err);
+        if (err.response?.status === 401) {
+          navigate("/login");
+        }
+      });
+  }, [navigate]);
 
-    // recipientValue 기준으로 검색
+  // recipientValue 기준으로 검색
   const safeLetters = Array.isArray(letters) ? letters : [];
   const filteredLetters = safeLetters.filter(item => {
     if (!search.trim()) return true;
-    let recipientValue = "";
+    let senderValue = "";
     if (item.type === "sky") {
-      recipientValue = item.receiver_name || "";
+      senderValue = item.receiver_name || "";
     } else {
-      recipientValue = item.recipients?.map(r => r.display_id || r.email).join(", ") || "";
+      senderValue = item.sender_display_id || item.sender?.display_id || item.sender?.email || "";
     }
-    return recipientValue.includes(search.trim());
+    return senderValue.includes(search.trim());
   });
 
   const currentLetters = filteredLetters.slice(
@@ -92,12 +93,12 @@ const ReceivedList = () => {
           <p className="no-letters">받은 편지가 없습니다.</p>
         ) : (
           currentLetters.map(item => {
-            let recipientValue = "정보 없음";
+            let senderValue = "정보 없음";
+            
             if (item.type === "sky") {
-              recipientValue = item.receiver_name || "정보 없음";
+              senderValue = item.receiver_name || "정보 없음";
             } else {
-              recipientValue =
-                item.recipients?.map(r => r.display_id || r.email).join(", ") || "정보 없음";
+              senderValue = item.sender_display_id || item.sender?.display_id || item.sender?.email || "정보 없음";
             }
 
             return (
@@ -117,7 +118,7 @@ const ReceivedList = () => {
                     } ]
                 </span>
                 <span className="received-user">
-                  {recipientValue}
+                  {senderValue}
                 </span>
                 <button
                   className="received-detail"

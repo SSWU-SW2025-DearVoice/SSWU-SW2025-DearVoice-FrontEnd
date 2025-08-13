@@ -22,13 +22,11 @@ const FindPassword = () => {
     setMessage("");
     
     try {
-      // 아이디와 이메일 일치 확인
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/check-user-email/`, {
         user_id: form.user_id,
         email: form.email
       });
       
-      // 일치하면 비밀번호 재설정 이메일 전송
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/send-password-reset/`, {
         user_id: form.user_id,
         email: form.email
@@ -47,7 +45,6 @@ const FindPassword = () => {
     if (modalType === "success") {
       navigate("/login");
     }
-    // 실패 시에는 현재 페이지에 머물러서 다시 시도할 수 있게
   };
 
   const handleLoginClick = () => {

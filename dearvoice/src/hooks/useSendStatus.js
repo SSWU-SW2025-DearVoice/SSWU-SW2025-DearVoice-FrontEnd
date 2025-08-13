@@ -18,7 +18,6 @@ export const useSendStatus = () => {
     }
   };
 
-  // 상태 초기화 함수 추가
   const resetStatus = () => {
     setIsSending(false);
     setIsSent(false);

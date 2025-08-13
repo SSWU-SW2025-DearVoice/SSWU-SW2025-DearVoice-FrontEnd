@@ -179,7 +179,7 @@
 .sent-actions {
   display: flex;
   align-items: center;
-  gap: 1px;   /* 기존 8px에서 2px로 줄임 */
+  gap: 1px;
   margin-left: auto;
 }
 

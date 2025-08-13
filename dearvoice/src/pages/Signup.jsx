@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/axios"
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 import "../styles/Signup.css";
 import letterlogo from "../assets/images/letter-before.png";
 
@@ -165,10 +166,7 @@ const Signup = () => {
 
     try {
       const { passwordConfirm, ...signupData } = form;
-
-      await axiosInstance.post("/api/auth/signup/", signupData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axiosInstance.post("/api/auth/signup/", signupData);
       setShowModal(true);
     } catch (err) {
       setMessage("회원가입 실패: 입력값을 확인하세요.");
@@ -302,7 +300,7 @@ const Signup = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-container">
-            <img src={letterlogo}></img>
+            <img src={letterlogo} alt="편지 로고" />
             <div className="modal-content">
               <h3>회원가입 완료</h3>
               <button className="modal-btn" onClick={handleModalConfirm}>

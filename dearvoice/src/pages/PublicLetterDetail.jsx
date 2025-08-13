@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axiosInstance from "../apis/axios";
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 import "../styles/LetterDetailCard.css";
 
 function PublicLetterDetail() {
@@ -10,21 +11,30 @@ function PublicLetterDetail() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axiosInstance
-      .get(`/api/letters/share/${uuid}/`)
-      .then((res) => {
-        setLetter(res.data);
-      })
-      .catch(() => {
+    const fetchLetter = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/letters/share/${uuid}/`);
+        setLetter(response.data);
+      } catch (error) {
+        console.error("편지 불러오기 실패:", error);
         setError("편지를 불러올 수 없습니다. 이미 삭제되었거나 잘못된 링크입니다.");
-      });
+      }
+    };
+
+    fetchLetter();
   }, [uuid]);
 
   if (error) return <div>{error}</div>;
   if (!letter) return <div>로딩 중...</div>;
 
   const handleSendClick = () => {
-    navigate("/?redirect=/send");
+    const isLoggedIn = authStorage.isLoggedIn();
+    
+    if (isLoggedIn) {
+      navigate("/voice");
+    } else {
+      navigate("/?redirect=/voice"); 
+    }
   };
 
   return (
@@ -87,9 +97,9 @@ function PublicLetterDetail() {
           : "날짜 없음"}
       </div>
 
-        <button className="letterdetail-loginbtn" onClick={handleSendClick}>
-          Dear Voice 시작하기
-        </button>
+      <button className="letterdetail-loginbtn" onClick={handleSendClick}>
+        {authStorage.isLoggedIn() ? "편지 보내기" : "Dear Voice 시작하기"}
+      </button>
     </div>
   );
 }

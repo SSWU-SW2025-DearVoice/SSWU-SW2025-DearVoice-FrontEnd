@@ -6,12 +6,13 @@ import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
 import recordCompleted from "../assets/images/record-complete.png";
 import letterbefore from "../assets/images/letter-before.png";
-import lettercomplete from "../assets/images/letter-complete.svg";
+import lettercomplete from "../assets/icons/letter-complete.svg";
 
 import { useTodayDate } from "../hooks/useTodayDate";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { useSendStatus } from "../hooks/useSendStatus";
-import axiosInstance from "../apis/axios";
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 import { useNavigate } from "react-router-dom";
 
 const VoiceLetter = () => {
@@ -88,17 +89,14 @@ const VoiceLetter = () => {
   };
 
   const uploadToS3 = async (fileBlob) => {
-    const accessToken = localStorage.getItem("accessToken");
-
     const formData = new FormData();
-    formData.append("file", fileBlob, "recording.wev");
+    formData.append("file", fileBlob, "recording.wav");
 
     const response = await axiosInstance.post(
       "/api/letters/upload/",
       formData,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       }
@@ -109,12 +107,6 @@ const VoiceLetter = () => {
 
   const transcribeAudio = async () => {
     if (!recordedBlob) return;
-
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      navigate("/login");
-      return;
-    }
 
     setIsTranscribing(true);
     try {
@@ -128,7 +120,6 @@ const VoiceLetter = () => {
         { audio_url: s3Url },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -156,32 +147,33 @@ const VoiceLetter = () => {
 
   const isFormComplete = recipient && date && time && isRecorded;
 
-
   console.log("transcript:", transcript);
   console.log("uploadedUrl:", uploadedUrl);
   console.log("recordedBlob:", recordedBlob);
 
   const sendMyLetter = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      navigate("/login");
-      return false;
-    }
-
     let payload = {};
 
     try {
       const s3Url = uploadedUrl || (await uploadToS3(recordedBlob));
       setUploadedUrl(s3Url); 
 
-      const payload = {
+      payload = {
         recipients: [{ email: recipient }],
         paper_color: selectedColor,
-        scheduled_at: `${date}T${time}:00`,
         audio_url: s3Url,
         transcript: transcript,
         title: title,
       };
+
+      if (date && time) {
+        const scheduledTime = new Date(`${date}T${time}:00`);
+        const now = new Date();
+        
+        if (scheduledTime > now) {
+          payload.scheduled_at = `${date}T${time}:00`;
+        }
+      }
 
       console.log("최종 payload:", payload);
 
@@ -190,7 +182,6 @@ const VoiceLetter = () => {
         payload,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -239,7 +230,7 @@ const VoiceLetter = () => {
           <span className="letterdetail-input">
             <input
               type="email"
-              placeholder="받는 사람 아이디 또는 이메일"
+              placeholder="받는 사람 이메일 주소"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
               required

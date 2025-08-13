@@ -22,8 +22,6 @@ const slides = [
   },
 ];
 
-
-
 function Onboarding() {
   const [idx, setIdx] = useState(0);
   const navigate = useNavigate();
@@ -39,7 +37,6 @@ function Onboarding() {
     <div className="mobile-wrapper">
       <div className="onboarding-container">
        <AnimatePresence mode="wait">
-          {/* 텍스트 애니메이션 */}
           <motion.div
             key={"text-" + idx}
             className="onboarding-text"
@@ -53,7 +50,6 @@ function Onboarding() {
             ))}
           </motion.div>
 
-          {/* 이미지 애니메이션 */}
           <motion.img
             key={"img-" + idx}
             src={slides[idx].img}

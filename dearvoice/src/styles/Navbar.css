@@ -46,11 +46,13 @@
     background-color: #5a4747e5;
     color: #fff;
     transition: background 0.15s;
-
 }
 
 .logout{
-    margin-top: 70px;
+    margin-top: 80px;
+}
+.signout{
+  margin-top: -4px;
 }
 
 .nablist-third{

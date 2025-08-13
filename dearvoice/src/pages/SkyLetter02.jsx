@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/axios";
+import axiosInstance from "../apis/axiosInstance";
+import { authStorage } from "../utils/authStorage";
 
 import record from "../assets/images/record.png";
 import recordActive from "../assets/images/record-active.png";
@@ -91,17 +92,14 @@ const SkyLetter02 = () => {
   };
 
   const uploadToS3 = async (fileBlob) => {
-    const accessToken = localStorage.getItem("accessToken");
-
     const formData = new FormData();
-    formData.append("file", fileBlob, "recording.wev");
+    formData.append("file", fileBlob, "recording.wav");
 
     const response = await axiosInstance.post(
       "/api/letters/upload/",
       formData,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       }
@@ -112,9 +110,7 @@ const SkyLetter02 = () => {
 
   const transcribeAudio = async () => {
     if (!recordedBlob) return;
-
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+    if (!authStorage.isLoggedIn()) {
       navigate("/login");
       return;
     }
@@ -132,7 +128,6 @@ const SkyLetter02 = () => {
         { audio_url: s3Url },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -159,8 +154,7 @@ const SkyLetter02 = () => {
   }, [isRecorded, recordedBlob]);
 
   const sendSkyLetter = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+    if (!authStorage.isLoggedIn()) {
       navigate("/login");
       return;
     }
@@ -183,7 +177,6 @@ const SkyLetter02 = () => {
 
       const response = await axiosInstance.post("/skyvoice/letters/", payload, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
