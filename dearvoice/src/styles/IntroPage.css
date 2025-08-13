@@ -3,7 +3,7 @@
   max-width: 375px;
   height: 100vh;
   margin: 0 auto;
-  background-color: #FAF4DA;
+  background-color: #faf4da;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,7 +31,7 @@
 
 .letter-img {
   position: absolute;
-  transition: opacity 1.0s;
+  transition: opacity 1s;
   opacity: 0;
 }
 
@@ -93,7 +93,7 @@
   font-size: 14px;
   border: none;
   cursor: pointer;
-  display: flex;             
+  display: flex;
 }
 
 .login-btn {
@@ -103,7 +103,9 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;   
+  justify-content: flex-start;
+  gap: 90px;
+  padding-left: 12px;
 }
 
 .google-btn {
@@ -113,7 +115,9 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;   
+  justify-content: flex-start;
+  gap: 60px;
+  padding-left: 12px;
 }
 
 .signup-btn {
@@ -123,11 +127,13 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;   
+  justify-content: flex-start;
+  gap: 80px;
+  padding-left: 12px;
 }
 
-.login-btn:hover, .signup-btn:hover, .google-btn:hover{
-  background-color: #F9CB73;
+.login-btn:hover,
+.signup-btn:hover,
+.google-btn:hover {
+  background-color: #f9cb73;
 }
-
-
