@@ -1,0 +1,97 @@
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import "../../styles/LetterDetail.css";
+import LetterDetailCard from "../../components/LetterDetailCard";
+import axiosInstance from "../../apis/axiosInstance";
+import { authStorage } from "../../utils/authStorage";
+
+function ReceivedLetterDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [letter, setLetter] = useState(null);
+  const [isReplyLoading, setIsReplyLoading] = useState(false);
+  const pollingRef = useRef(null);
+
+  const isSkyLetter = location.pathname.includes("/sky/");
+
+  useEffect(() => {
+    const url = isSkyLetter
+      ? `/skyvoice/letters/${id}/`
+      : `/api/letters/${id}/`;
+
+    const fetchLetter = async () => {
+      try {
+        const res = await axiosInstance.get(url);
+        setLetter(res.data);
+
+        if (isSkyLetter && !res.data.reply_text && !pollingRef.current) {
+          setIsReplyLoading(true);
+          pollingRef.current = setInterval(fetchLetter, 2000);
+        }
+        // 답장 오면 폴링 종료
+        if (isSkyLetter && res.data.reply_text && pollingRef.current) {
+          setIsReplyLoading(false);
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+      } catch (err) {
+        console.error("상세 조회 실패", err);
+        if (err.response?.status === 401) {
+          navigate("/login");
+        }
+      }
+    };
+
+    fetchLetter();
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [id, isSkyLetter, navigate]);
+
+  useEffect(() => {
+    if (!letter || isSkyLetter) return;
+
+    if (!authStorage.isLoggedIn()) {
+      navigate("/login");
+      return;
+    }
+
+    axiosInstance
+      .patch(`/api/mypage/letter/${id}/read/`)
+      .then((res) => {
+        console.log("읽음 처리 완료", res.data);
+      })
+      .catch((err) => {
+        console.error("읽음 처리 실패", err);
+        if (err.response?.status === 401) {
+          navigate("/login");
+        }
+      });
+  }, [letter, id, isSkyLetter, navigate]);
+
+  if (!letter) {
+    return <div>편지를 불러오는 중입니다...</div>;
+  }
+
+  return (
+    <div className="letterdetail-wrapper">
+      <div
+        className="letterdetail-title"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate("/mypage/received")}
+      >
+        내 보관소 - 받은 편지함
+      </div>
+
+      <LetterDetailCard
+        letter={letter}
+        isSender={false}
+        isSky={isSkyLetter}
+        isReplyLoading={isReplyLoading}
+      />
+    </div>
+  );
+}
+
+export default ReceivedLetterDetail;

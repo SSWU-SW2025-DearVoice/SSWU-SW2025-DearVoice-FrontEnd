@@ -1,0 +1,25 @@
+.header-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.header-container{
+    display: flex;
+    justify-content: space-between;
+    padding: 25px 18px;
+}
+
+.logotext {
+    width: 180px;
+    cursor: pointer;
+}
+
+.navbar-button {
+    background: none;
+    border: none;
+}
+
+.burgerbar{
+    margin-top: 15px;
+    cursor: pointer;
+}

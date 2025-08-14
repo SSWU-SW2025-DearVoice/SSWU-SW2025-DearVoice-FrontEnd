@@ -1,0 +1,146 @@
+.receivedlist-wrapper {
+  width: 100%;
+  max-width: 375px;
+  margin: 0 auto;
+}
+
+.receivedlist-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3B2F2F;
+  padding-left: 16px;
+  margin-left: 25px;
+  margin-top: 40px;
+  border-left: 4px solid #F9CB73;
+  margin-bottom: 30px;
+}
+
+.receivedlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 60px;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-top: 18px;
+}
+
+.received-item {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 5px 5px 5px 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 5px #0002;
+  min-height: 35px;
+}
+
+.received-item:hover {
+  border: 2.3px solid #3B2F2F;
+  box-shadow: 0 2px 12px #f9cb7360;
+}
+
+.received-item-green { background: #c6eab7; }
+.received-item-gray  { background: #e3e3e3; }
+.received-item-yellow{ background: #ffe6a7; }
+.received-item-blue  { background: #b7d8f2; }
+.received-item-pink  { background: #f7c6c6; }
+
+.received-title {
+  width: 175px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.received-user {
+  width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  font-weight: 400;
+  font-size: 14px;
+  color: gray;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.received-detail{
+    background: none;
+    background-color: transparent;
+    border: none;
+    margin-left: auto;
+    cursor: pointer;
+    padding-right: 3px;
+}
+
+.arrow {
+    width: 24px;
+    height: 24px;
+    display: block;
+ }
+
+.receivedlist-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pagination-num {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #3b2f2fa5;
+  background-color: transparent;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #3B2F2F;
+}
+
+.pagination-num.active {
+  background: #F9CB73;
+  color: #3B2F2F;
+  font-weight: bold;
+}
+
+.pagination-arrow{
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.arrow-start{
+  width: 30px;
+  height: 30px;
+}
+
+.arrow-end{
+  width: 24px;
+  height: 24px;
+}
+
+.pagination-arrow:disabled .arrow-start,
+.pagination-arrow:disabled .arrow-end {
+  opacity: 0.4;
+}
+
+.received-filter-btn{
+  height: 30px;
+  color: #fff;
+  margin-left: 25px;
+  background: none;
+  border-radius: 10px;
+  border: none;
+  background-color: #e3e3e3;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-right: -10px;
+}
+
+.received-filter-btn.active {
+  background-color: #F9CB73;
+  color: #3B2F2F;
+}

@@ -1,0 +1,250 @@
+.mobile-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #FAF4DA;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.login-container {
+  background-color: #F9CB7333;
+  border: 3px solid #F9CB73;
+  border-radius: 15px;
+  padding: 15px 17px;
+  width: 100%;
+  width: 300px;
+  height: 190px;
+  position: relative;
+  margin: auto 0;
+}
+
+.login-title {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F9CB73;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  width: 96px;
+  height: 34px;
+  color: #3B2F2F;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.login-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.login-field-id {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #c2a36961;
+  border-radius: 8px;
+  padding: 8px 12px;
+  flex: 1;
+  width: 260px;
+  height: 25px;
+}
+
+.field-label-id {
+  color: #3B2F2F;
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 2px;
+  min-width: 40px;
+  font-weight: 600;
+}
+
+.login-field-id input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  background: transparent;
+  max-width: 240px;
+}
+
+.login-field-pw {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #c2a36961;
+  border-radius: 8px;
+  padding: 8px 12px;
+  flex: 1;
+  width: 260px;
+  height: 25px;
+}
+
+.field-label-pw {
+  color: #3B2F2F;
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 2px;
+  min-width: 70px;
+  white-space: nowrap;
+}
+
+.login-field-pw input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  background: transparent;
+  max-width: 210px;
+}
+
+.login-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #3B2F2F;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.link-separator {
+  color: #3B2F2F;
+  font-size: 12px;
+  margin: 0 4px;
+}
+
+.login-submit-btn {
+  background: #9A9A9A;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3B2F2F;
+  cursor: pointer;
+  width: 104px;
+  height: 42px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+  display: block;
+  margin: 60px auto 0 auto;
+}
+
+.login-submit-btn:hover {
+  background: #F9CB73;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.35);
+}
+
+.login-submit-btn:active {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
+
+.login-message {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background: #000000;
+  border: 3px solid #F9CB73;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 280px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modal-container::before {
+  content: "✉";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F9CB73;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #3B2F2F;
+}
+
+.modal-content h3 {
+  color: white;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.modal-content p {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.modal-btn {
+  background: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3B2F2F;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.modal-btn:hover {
+  background: #f5f5f5;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}

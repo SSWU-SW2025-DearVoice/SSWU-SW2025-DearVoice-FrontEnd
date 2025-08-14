@@ -1,0 +1,52 @@
+.letterdetail-description {
+  margin-top: -4px;
+  margin-bottom: 10px;
+}
+
+.letterdetail-row input {
+  border: none;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overlay-text {
+  color: white;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+
+.sending-img {
+  width: 340px;
+}
+
+.sent-img {
+  width: 340px;
+  margin-top: 250px;
+}
+
+.reply-btn {
+  margin-top: 160px;
+  padding: 16px 100px;
+  background-color: #f9cb73;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
