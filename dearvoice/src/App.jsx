@@ -52,7 +52,6 @@ function App() {
               <Route path="detail/received/:id" element={<ReceivedLetterDetail />} />
               <Route path="detail/received/sky/:id" element={<ReceivedLetterDetail />} />
               <Route path="detail/sent/sky/:id" element={<SentLetterDetail />} />
-              <Route path="detail/:id" element={<ReceivedLetterDetail />} />
             </Route>
           </Route>
         </Route>

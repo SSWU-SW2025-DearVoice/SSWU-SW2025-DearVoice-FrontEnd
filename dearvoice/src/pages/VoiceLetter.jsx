@@ -147,10 +147,6 @@ const VoiceLetter = () => {
 
   const isFormComplete = recipient && date && time && isRecorded;
 
-  console.log("transcript:", transcript);
-  console.log("uploadedUrl:", uploadedUrl);
-  console.log("recordedBlob:", recordedBlob);
-
   const sendMyLetter = async () => {
     let payload = {};
 
