@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../apis/axiosInstance";
 import { authStorage } from "../utils/authStorage";
 import "../styles/LetterDetailCard.css";
@@ -17,7 +17,9 @@ function PublicLetterDetail() {
         setLetter(response.data);
       } catch (error) {
         console.error("편지 불러오기 실패:", error);
-        setError("편지를 불러올 수 없습니다. 이미 삭제되었거나 잘못된 링크입니다.");
+        setError(
+          "편지를 불러올 수 없습니다. 이미 삭제되었거나 잘못된 링크입니다."
+        );
       }
     };
 
@@ -29,16 +31,20 @@ function PublicLetterDetail() {
 
   const handleSendClick = () => {
     const isLoggedIn = authStorage.isLoggedIn();
-    
+
     if (isLoggedIn) {
       navigate("/voice");
     } else {
-      navigate("/?redirect=/voice"); 
+      navigate("/?redirect=/voice");
     }
   };
 
   return (
-    <div className={`public-letterdetail-box letterdetail-${letter.paper_color || letter.color || "gray"}`}>
+    <div
+      className={`public-letterdetail-box letterdetail-${
+        letter.paper_color || letter.color || "gray"
+      }`}
+    >
       <div className="letterdetail-row">
         <span className="letterdetail-label">발신인ㅣ</span>
         <span className="letterdetail-value">
@@ -49,7 +55,7 @@ function PublicLetterDetail() {
         <span className="letterdetail-label">수신인ㅣ</span>
         <span className="letterdetail-value">
           {letter.recipients && letter.recipients.length > 0
-            ? letter.recipients.map(r => r.email).join(", ")
+            ? letter.recipients.map((r) => r.email).join(", ")
             : "정보 없음"}
         </span>
       </div>
@@ -66,12 +72,15 @@ function PublicLetterDetail() {
         </span>
       </div>
       {letter.audio_url && (
-        <div className="letterdetail-audio" style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "4px",
-        }}>
+        <div
+          className="letterdetail-audio"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "4px",
+          }}
+        >
           <audio
             controls
             src={letter.audio_url}
@@ -80,7 +89,7 @@ function PublicLetterDetail() {
               maxWidth: 400,
               borderRadius: "12px",
               background: "#f8f8f8",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
             }}
           />
         </div>
@@ -98,7 +107,7 @@ function PublicLetterDetail() {
       </div>
 
       <button className="letterdetail-loginbtn" onClick={handleSendClick}>
-        {authStorage.isLoggedIn() ? "편지 보내기" : "Dear Voice 시작하기"}
+        {authStorage.isLoggedIn() ? "답장 보내기" : "Dear Voice 시작하기"}
       </button>
     </div>
   );
