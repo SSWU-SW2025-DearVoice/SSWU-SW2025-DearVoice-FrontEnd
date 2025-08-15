@@ -12,7 +12,6 @@ import { useTodayDate } from "../hooks/useTodayDate";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { useSendStatus } from "../hooks/useSendStatus";
 import axiosInstance from "../apis/axiosInstance";
-import { authStorage } from "../utils/authStorage";
 import { useNavigate } from "react-router-dom";
 
 const VoiceLetter = () => {
